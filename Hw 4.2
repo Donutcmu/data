@@ -1,0 +1,53 @@
+package hw4queue;
+
+public class Queue {
+  // Implement Queue using Linked List with tail
+  OrderNode head;
+  OrderNode tail;
+  
+  public void Push(OrderNode node){
+    //START FIX HERE
+    //Queue เราต้องเติมข้อมูลที่หาง
+        if (head == null){
+            // Do something (Empty list)
+            head = node;
+            tail = node;
+            //เริ่มจากเราเช็คว่าข้างในมีNodeอยู่รึป่าว อันนี้ไม่มีดังนั้นเราให้Nodeนี้เป็นทั้งhead และtail
+        }else{
+            // Do something (Non-empty list)
+            tail.next = node;
+            tail = node;
+            //ในQUEUEนี้มีnodeอยู่แล้วดังนั้นเราต้องเอาไปต่อท้าย ดังนั้นจึงให้nodeใหม่ไปต่อหลังtailแล้วให้nodeใหม่เป็นtail
+        }
+    //END FIX HERE
+  }
+  
+  public void Pop(){
+    //START FIX HERE
+        if (head != null){
+          //เช็คว่าqueueนี้มีnodeอยู่หรือไม่
+            if (head != tail){
+                // Do something (List of many nodes)
+                head = head.next;
+                //ถ้าqueueนี้มีnodeมากกว่า1ตัว เราก็จะให้headชี้ไปที่ตัวถัดไป แล้วheadจะถูกลบออกอัตโนมัติ
+            }else{
+                head = null;
+                tail = null;
+                // Do something (List of a single node)
+                //ถ้ามีnodeเดียว ก็ให้ชี้ไปที่nullเลย
+            }
+        }
+        else{
+          System.out.println("Error: Queue Underflow");
+        }
+    //END FIX HERE
+  }
+  
+  public OrderNode Top(){
+    //START FIX HERE
+      return head;
+      //return head ออกไปเลยเพราะheadเป็นคนแรกที่ต้องออก
+    //END FIX HERE
+  }
+  
+}
