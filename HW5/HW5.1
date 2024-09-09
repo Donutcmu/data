@@ -1,0 +1,19 @@
+public class Node extends BTreePrinter{ // Fix this line
+        //extend เพื่อนำเข้าคลาสBTreePrinter
+    
+    Node left;
+    Node right;
+    int data;
+
+    public Node(int data) {
+        // fix this
+        this.data = data;
+        //ใส่ค่าให้กับnodeซึ่งเป็นconstructorเพื่อกำหนดค่าให้กับnodeที่สร้างขึ้นมา
+    }
+
+    public void printTree() {
+        // Understand this line before uncommenting
+        super.printTree(this);
+    }
+
+}

@@ -1,0 +1,17 @@
+public static Node constructTree2(){
+     Node root = new Node(1); // Fix this
+     //สร้างroot node ที่มีค่า=1
+    // do something
+    root.left = new Node(2);//เพิ่มnodeที่มีdata=2ไปทางซ้าย
+    root.right = new Node(3);//เพิ่มnodeที่มีdata=3ไปทางขวา
+    
+    root.left.right = new Node(5);//เพิ่มnodeที่มีdata=5ไปทางขวาของnodeที่มีdata=2
+    root.right.right = new Node(6);//เพิ่มnodeที่มีdata=6ไปทางขวาต่อจากnodeที่มีdata=3
+    root.right.right.left = new Node(9);//เพิ่มnodeที่มีdata=9ไปทางซ้ายต่อจากnodeที่มีdata=6ทำให้nodeนี้เป็นleaf node
+    root.left.left = new Node(4);//เพิ่มnodeที่มีค่า=4ไปทางซ้ายของnodeที่มีค่า=2 ซึ่งnodeนี้เป็นleaf node
+    root.left.right.left = new Node(7);//เพิ่มnodeที่มีค่า=7ไปทางซ้ายของnodeที่มีค่าเท่ากับ5nodeนี้เป็นleaf node
+    root.left.right.right = new Node(8);//เพิ่มnodeที่มีค่า=8ไปทางขวาของnodeที่มีค่า=5
+    root.left.right.right.right = new Node(10);//เพิ่มnodeที่มีค่า=10ไปทางขวาต่อจากnodeที่มีค่า=8และnodeนี้เป็นleaf node
+    
+    return root;
+}
