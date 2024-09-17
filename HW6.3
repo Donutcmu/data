@@ -1,0 +1,129 @@
+public class Tree extends BTreePrinter{ // Fix this
+  Node root;
+    
+  public Tree(Node root){
+      // fix this
+      this.root = root;
+  }
+  
+  public void printTree(){
+      // Pls use codes from the previous problem
+      if(root != null)
+        super.printTree(root);
+      else
+        System.out.println("Empty tree!!!");
+  }
+
+  public static void printNode(Node node){
+      // Pls use codes from the previous problem
+      if(node == null)
+      {
+          System.out.println("Node not found!!!");
+      }
+      else
+      {
+          System.out.println(node.key);
+      }
+  }
+  
+  public Node findKey(int search_key){
+      // Pls use codes from the previous problem
+      Node current = root;
+      return findKey(current,search_key);
+  }
+  
+  public static Node findKey(Node node, int search_key){
+      // Pls use codes from the previous problem
+      if(node == null) 
+      {
+          return null;
+      }
+      
+      if(node.key == search_key) 
+      {
+          return node;
+      }
+      if(node.key > search_key)  
+      {
+          return findKey(node.left, search_key);
+      } 
+      else
+      {
+          return findKey(node.right, search_key);
+      }
+  }
+
+  public static int height(Node node){
+      // Use recursion to implement this function
+      // height = length(path{node->deepest child})
+      if(node == null)
+        return -1;
+      else
+        return 1 + Math.max(height(node.left),height(node.right));
+  }
+  
+  public static int size(Node node){
+      // Use recursion to implement this function
+      // size = #children + 1(itself)
+      if(node == null)
+        return 0;
+      else
+        return 1 + size(node.left) + size(node.right);
+  }
+  
+  public static int depth(Node root, Node node){
+      // Use recursion to implement this function
+      // Similar to height() but start from node, go up to root
+      // depth = length(path{node->root})
+      if(node == null)
+      {
+         return -1;
+      }
+      if(node == root)
+      {
+         return 0;
+      }
+      return 1 + depth(root,node.parent);
+  }
+  
+  public int treeHeight(){ // Tree height
+      // Hint: call the static function
+      return height(root);
+  }
+  
+  public int treeSize(){ // Tree size
+      // Hint: call the static function
+      return size(root);
+  }
+  
+  public int treeDepth(){ // Tree depth
+      // Hint: call the static function
+      return height(root);
+  }
+  
+  public Node findKthSmallest(int k){
+      return findKthSmallest(root,k); // Call the recursive version
+  }
+  
+  public static Node findKthSmallest(Node node, int k){
+      // this function should be recursive
+      Node smallest = null;
+      int l = size(node.left);
+      if(k == l +1 )
+      {
+          smallest = node;
+      }
+
+      else if(k < l +1 )
+      {
+          return findKthSmallest(node.left,k);
+      }
+      else if(k > l + 1)
+      {
+          return findKthSmallest(node.right,k-l-1);
+      }
+
+      return smallest;
+  }
+  public Tree(){} // Dummy constructor (No need to edit)
+}
