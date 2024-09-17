@@ -84,7 +84,7 @@ public class Tree extends BTreePrinter{ // Fix this
       //ฟังก์ชันนี้จะหาว่าลูกของnodeนี้รวมกันมีจำนวนกี่ตัว
       if(node == null)
         return 0;
-        ถ้าไปถึงตัวที่ไม่มีลูกแล้วจะreturn 0 กลับมา
+        //ถ้าไปถึงตัวที่ไม่มีลูกแล้วจะreturn 0 กลับมา
       else
         return 1 + size(node.left) + size(node.right);
         //จะreturn 1+sizeทีเรียกตัวเองอีกครั้งไปทางซ้ายเรื่อยๆ+sizeทีเรียกตัวเองอีกครั้งไปทางขวาเรื่อยๆ
