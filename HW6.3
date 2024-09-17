@@ -4,14 +4,18 @@ public class Tree extends BTreePrinter{ // Fix this
   public Tree(Node root){
       // fix this
       this.root = root;
+      //สร้างconstructorสำหรับtree โดยสร้างroot node
   }
   
   public void printTree(){
       // Pls use codes from the previous problem
       if(root != null)
         super.printTree(root);
+        //เช็คว่าtreeนี้มีว่างรึป่าวโดยการเช็คที่root
+        //ถ้ามี ทำการprintTree ออกมา
       else
         System.out.println("Empty tree!!!");
+        //ไม่มีเป็นtreeว่าง ให้print "Empty tree!!!"
   }
 
   public static void printNode(Node node){
@@ -19,10 +23,12 @@ public class Tree extends BTreePrinter{ // Fix this
       if(node == null)
       {
           System.out.println("Node not found!!!");
+          //nodeนี้ไม่มีอยู่ print "Node not found!!!"
       }
       else
       {
           System.out.println(node.key);
+          //print key ของnode
       }
   }
   
@@ -30,97 +36,123 @@ public class Tree extends BTreePrinter{ // Fix this
       // Pls use codes from the previous problem
       Node current = root;
       return findKey(current,search_key);
+      //ตามหาnodeที่มี key=search_key โดยใช้recursive functionในการตามหา
   }
   
   public static Node findKey(Node node, int search_key){
       // Pls use codes from the previous problem
+      //ฟังก์ชันนี้มีการเรียกใช้ตัวเอง โดยจะinput nodeและsearch_keyให้กับมัน
       if(node == null) 
       {
           return null;
+          //ถ้าnodeว่างจะทำการreturn nullกลับไป
       }
       
       if(node.key == search_key) 
       {
           return node;
+          //ถ้าเจอnodeที่มีkey=search_keyแล้วจะreturn nodeนี้ออกไป
       }
       if(node.key > search_key)  
       {
           return findKey(node.left, search_key);
+          //ถ้าkeyของตัวนี้มีค่ามากกว่าsearch_keyให้เรียกตัวเองอีกครั้งโดยnodeที่ใส่เข้าไปจะเป็นnodeทางซ้าย
+          //เพราะจะได้เจอกับnodeที่มีkeyน้อยลง
       } 
       else
       {
           return findKey(node.right, search_key);
+          //ถ้าkeyของตัวนี้มีค่าน้อยกว่าsearch_keyให้เรียกตัวเองอีกครั้งโดยnodeที่ใส่เข้าไปจะเป็นnodeขวา
+          //เพราะจะได้เจอกับnodeที่มีkeyมากกว่าkeyปัจจุบัน
       }
   }
 
   public static int height(Node node){
       // Use recursion to implement this function
       // height = length(path{node->deepest child})
+      //หาความสูงของnode โดยการใช้recursive function
       if(node == null)
         return -1;
       else
         return 1 + Math.max(height(node.left),height(node.right));
+        //เมื่อฟังก์ชันถูกเรียกแล้วไปได้ต่อฟังก์ชัน ก็จะreturnความสูงที่+1มาเรื่อยๆจนกว่าจะไปถึงลูกที่อยู่ลึกสุดในตอนสุดท้ายก็จะได้ค่าที่ทุกตัวบวกกัน
   }
   
   public static int size(Node node){
       // Use recursion to implement this function
       // size = #children + 1(itself)
+      //ฟังก์ชันนี้จะหาว่าลูกของnodeนี้รวมกันมีจำนวนกี่ตัว
       if(node == null)
         return 0;
+        ถ้าไปถึงตัวที่ไม่มีลูกแล้วจะreturn 0 กลับมา
       else
         return 1 + size(node.left) + size(node.right);
+        //จะreturn 1+sizeทีเรียกตัวเองอีกครั้งไปทางซ้ายเรื่อยๆ+sizeทีเรียกตัวเองอีกครั้งไปทางขวาเรื่อยๆ
   }
   
   public static int depth(Node root, Node node){
       // Use recursion to implement this function
       // Similar to height() but start from node, go up to root
       // depth = length(path{node->root})
+      //วัดความลึกจากroot
       if(node == null)
       {
          return -1;
+         
       }
       if(node == root)
       {
          return 0;
+         //กลับมาถึงrootแล้ว return
       }
       return 1 + depth(root,node.parent);
+      //return 1+ เรียกใช้ตัวเองไปเรื่อยจนกว่าจะถึงroot
   }
   
   public int treeHeight(){ // Tree height
       // Hint: call the static function
       return height(root);
+      //เรียกใช้ฟังกชัน height ที่เป็นrecursive ที่เขียนไว้
   }
   
   public int treeSize(){ // Tree size
       // Hint: call the static function
       return size(root);
+      //เรียกใช้ฟังกชัน size ที่เป็นrecursive ที่เขียนไว้
   }
   
   public int treeDepth(){ // Tree depth
       // Hint: call the static function
       return height(root);
+      //return ความสูงของรากกลับมา โดยเรียกใช้ฟังกชัน height
   }
   
   public Node findKthSmallest(int k){
       return findKthSmallest(root,k); // Call the recursive version
+      //เรียกใชัฟังก์ชันrecursive findKthSmallest(root,k)
   }
   
   public static Node findKthSmallest(Node node, int k){
       // this function should be recursive
       Node smallest = null;
+      //สร้างnodeขึ้นมาใหม่ เพื่อเก็บsmallest
       int l = size(node.left);
+      //ให้ l =ขนาดของnodeทางฝั่งซ้าย
       if(k == l +1 )
       {
           smallest = node;
+          //แปลว่าnodeนี้เป็นnodeที่keyมีค่าเล็กที่สุดเป็นอันดับที่ k
       }
 
       else if(k < l +1 )
       {
           return findKthSmallest(node.left,k);
+          //ถ้าk<1+l ให้ไปหาทางซ้าย
       }
       else if(k > l + 1)
       {
           return findKthSmallest(node.right,k-l-1);
+          //ถ้าk<1+l ให้ไปหาทางซ้าย
       }
 
       return smallest;
