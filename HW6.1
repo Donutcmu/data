@@ -1,0 +1,157 @@
+public class Tree extends BTreePrinter{ // Fix this
+  Node root;
+  Node left;
+  Node right;
+    
+  public Tree(Node root){
+      // fix this
+      this.root = root;
+  }
+  
+  public void printTree(){
+      if(root != null)
+        super.printTree(root);
+      else
+        System.out.println("Empty tree!!!");
+  }
+
+  public Node findKey(int search_key){
+      Node current = root;
+      return findKey(current,search_key);
+      
+       // Call the recursive version
+  }
+  
+  public static Node findKey(Node node, int search_key){
+      if(node == null) 
+      {
+          return null;
+      }
+      
+      if(node.key == search_key) 
+      {
+          return node;
+      }
+      if(node.key > search_key)  
+      {
+          return findKey(node.left, search_key);
+      } 
+      else
+      {
+          return findKey(node.right, search_key);
+      }
+
+  }
+  
+  public Node findMin(){
+      Node current = root;
+      return findMin(root);
+      // Call the recursive version
+  }
+  
+  public static Node findMin(Node node){
+      if(node.left != null)
+        {
+            return findMin(node.left);
+        }
+      else
+      {
+          return node;
+      }
+      // this function should be recursive
+      
+  }
+  
+  public Node findMax(){
+      Node current = root;
+      return findMax(current); // Call the recursive version
+  }
+  
+  public static Node findMax(Node node){
+      if(node.right != null)
+      {
+          return findMax(node.right);
+      }
+      else
+          return node;
+      // this function should be recursive
+  }
+  
+  public Node findClosestLeaf(int search_key){
+      Node current = root;
+      return findClosestLeaf(current,search_key);// Call the recursive version
+  }
+  
+  public static Node findClosestLeaf(Node node, int search_key){
+    if (node == null) {
+        return null;
+    }
+    
+    Node closetLeaf = node;
+    if(node.left == null || node.right == null)
+    {
+        closetLeaf = node;
+    }
+    
+    if(node.left != null && node.key > search_key)
+    {
+        return findClosestLeaf(node.left,search_key);
+    }
+    else if(node.right != null && node.key < search_key)
+    {
+        return findClosestLeaf(node.right,search_key);
+    }
+      // this function should be recursive
+    return closetLeaf;
+  }
+  
+  public Node findClosest(int search_key){
+      // Please use while loop to implement this function
+      // Try not to use recursion
+      
+      Node current, closest;
+      closest = current = root;
+      int min_diff = Integer.MAX_VALUE;
+      while(current != null)
+      {
+          int diff = Math.abs(current.key - search_key);
+          if(diff < min_diff)
+          {
+              min_diff = diff;
+              closest = current;
+          }
+          if(current.key > search_key)
+          {
+              current = current.left;
+          }
+          else if(current.key < search_key)
+          {
+              current = current.right;
+          }
+          else
+          {
+              break;
+          }
+      }
+      
+      // Use while loop to traverse from root to the closest leaf
+      
+      return closest;
+  }
+  
+  
+  // Print node's key
+  public static void printNode(Node node){
+      if(node == null)
+      {
+          System.out.println("Node not found!!!");
+      }
+      else
+      {
+          System.out.println(node.key);
+      }
+      
+  }
+  
+  public Tree(){} // Dummy constructor (No need to edit)
+}
