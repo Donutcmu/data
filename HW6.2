@@ -10,8 +10,11 @@ public class Tree extends BTreePrinter{ // Fix this
       // Pls use codes from the previous problem
       if(root != null)
         super.printTree(root);
+        //เช็คว่าtreeนี้มีว่างรึป่าวโดยการเช็คที่root
+        //ถ้ามี ทำการprintTree ออกมา
       else
         System.out.println("Empty tree!!!");
+        //ไม่มีเป็นtreeว่าง ให้print "Empty tree!!!"
   }
 
   public static void printNode(Node node){
@@ -19,10 +22,12 @@ public class Tree extends BTreePrinter{ // Fix this
       if(node == null)
       {
           System.out.println("Node not found!!!");
+          //nodeนี้ไม่มีอยู่ print "Node not found!!!"
       }
       else
       {
           System.out.println(node.key);
+          //print key ของnode
       }
   }
   
@@ -31,21 +36,26 @@ public class Tree extends BTreePrinter{ // Fix this
       // Pls use codes from the previous problem
     if (node == null) {
         return null;
+        //ถ้าnodeนี้เป็นnodeว่างให้return null
     }
     
     Node closetLeaf = node;
+    //กำหนดให้nodeที่ใกล้เคียงมากที่สุดเป็นnodeปัจจุบันที่รับเข้ามา
     if(node.left == null || node.right == null)
     {
         closetLeaf = node;
+        //ถ้าnodeนี้ไม่มีลูกก็คือnodeนี้เป็นnodeใบแล้ว nodeที่มีค่าใกล้ที่สุด ก็คือnodeนี้แหละ
     }
     
     if(node.left != null && node.key > search_key)
     {
         return findClosestLeaf(node.left,search_key);
+        //ถ้าnodeนี้มีลูกทางซ้ายอยู่ และkeyของnodeปัจจุบัน>search_keyแล้วให้เรียกตัวเองอีกทีโดยจะลงไปทางซ้ายเพื่อตามหาnodeที่มีkeyน้อยลง
     }
     else if(node.right != null && node.key < search_key)
     {
         return findClosestLeaf(node.right,search_key);
+        //ถ้าnodeนี้มีลูกทางขวาอยู่ และkeyของnodeปัจจุบัน>search_keyแล้วให้เรียกตัวเองอีกทีโดยจะลงไปทางขวาเพื่อตามหาnodeที่มีkeyมากขึ้น
     }
       // this function should be recursive
     return closetLeaf;
@@ -55,26 +65,31 @@ public class Tree extends BTreePrinter{ // Fix this
       // Implement insertKey() using the non-recursive version
       // This function should call findClosestLeaf()
       Node InsertRoot = findClosestLeaf(root,key);
+        //เรียกใช้ฟังก์ชันfindClosestLeaf แล้วจะได้InsertRoot=closetLeaf
       if(InsertRoot == null)
       {
           root = new Node(key);
           return;
+          //ถ้าหาinsertRootไม่เจอให้สร้างnodeใหม่เลย แล้วreturn
       }
       
       if(InsertRoot.key == key)
       {
           System.out.println("Duplicated key!!!");
           return;
+          //ถ้ามีkeyตัวนั้นอยู่แล้วให้return แล้วprint "Duplicated key!!!"
       }
       
       
       if(InsertRoot.key > key)
       {
          InsertRoot.left = new Node(key);
+         //ถ้าinsertRoot.key มีมากค่ามากกว่าkeyให้สร้างnodeใหม่เป็นลูกทางซ้ายของinsertRootโดยมีnode.key=key
       }
       if(InsertRoot.key < key)
       {
           InsertRoot.right = new Node(key);
+          //ถ้าinsertRoot.key มีมากค่ามากกว่าkeyให้สร้างnodeใหม่เป็นลูกทางซ้ายของinsertRootโดยมีnode.key=key
       }
     }
     
@@ -83,6 +98,7 @@ public class Tree extends BTreePrinter{ // Fix this
       System.out.print("PreOrder DFT node sequence [ ");
       printPreOrderDFT(root);
       // Call the recursive version
+      //เรียกใช้ฟังก์ชันrecursive สำหรับการprintPreOrderDFT
       System.out.println("]");
   }
   
@@ -95,6 +111,7 @@ public class Tree extends BTreePrinter{ // Fix this
           System.out.print(node.key + " ");
           printPreOrderDFT(node.left);
           printPreOrderDFT(node.right);
+          //print node.key ของtree ออกมาในรูปแบบPreOrderDeptFirstTraversal
       }
   }
   
@@ -102,6 +119,7 @@ public class Tree extends BTreePrinter{ // Fix this
       System.out.print("InOrder DFT node sequence [ ");
       printInOrderDFT(root);
       // Call the recursive version
+      //เรียกใช้ฟังก์ชันrecursive สำหรับการprintInOrderDFT
       System.out.println("]");
   }
   
@@ -117,6 +135,7 @@ public class Tree extends BTreePrinter{ // Fix this
         printInOrderDFT(node.left);
         System.out.print(node.key + " ");
         printInOrderDFT(node.right);
+        //print node.key ของtree ออกมาในรูปแบบInOrderDeptFirstTraversal
     }
   }
   
@@ -124,6 +143,7 @@ public class Tree extends BTreePrinter{ // Fix this
       System.out.print("PostOrder DFT node sequence [ ");
       // Call the recursive version
       printPostOrderDFT(root);
+      //เรียกใช้ฟังก์ชันrecursive สำหรับการPostOrderDFT
       System.out.println("]");
   }
   
@@ -138,6 +158,7 @@ public class Tree extends BTreePrinter{ // Fix this
           printPostOrderDFT(node.left);
           printPostOrderDFT(node.right);
           System.out.print(node.key + " ");
+           //print node.key ของtree ออกมาในรูปแบบPostOrderDeptFirstTraversal
       }
   }
   
