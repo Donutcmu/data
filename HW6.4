@@ -1,0 +1,102 @@
+public class Tree extends BTreePrinter{ // Fix this
+    Node root;
+      
+    public Tree(Node root){
+        // fix this
+        this.root = root;
+    }
+    
+    public void printTree(){
+        // Pls use codes from the previous problem
+        if(root != null)
+            super.printTree(root);
+        else
+            System.out.println("Empty tree!!!");
+    }
+
+    public Node findClosest(int search_key){
+        // Pls use codes from the previous problem
+        Node current, closest;
+        closest = current = root;
+        int min_diff = Integer.MAX_VALUE;
+        while(current != null)
+        {
+            int diff = Math.abs(current.key - search_key);
+            if(diff < min_diff)
+            {
+                min_diff = diff;
+                closest = current;
+            }
+            if(current.key > search_key)
+            {
+                current = current.left;
+            }
+            else if(current.key < search_key)
+            {
+                current = current.right;
+            }
+            else
+            {
+                break;
+            }
+        }
+      
+      // Use while loop to traverse from root to the closest leaf
+      
+        return closest;
+    }
+    
+    public static Node findNext(Node node){
+        //this function should call other functions
+        if(node == null)
+            return null;
+        if(node.right != null)
+            return leftDescendant(node.right);
+        else
+            return rightAncestor(node);
+
+    }
+    
+    public static Node leftDescendant(Node node){// Case 1 (findMin)
+        // this function should be recursive
+        if(node == null)
+        {
+            return null;
+        }
+        if(node.left == null)
+            return node;
+        else
+            return leftDescendant(node.left);
+    }
+    
+    public static Node rightAncestor(Node node) {// Case 1 (first right parent)
+        // this function should be recursive
+        if (node == null || node.parent == null) {
+            return null;
+        }
+        if(node.key < node.parent.key)
+            return node.parent;
+        else
+            return rightAncestor(node.parent);
+    }
+    
+    public List rangeSearch(int x, int y)
+    {
+        // This function utilizes findCloest() and findNext()
+        // Use list.append(node) to add node to the list
+        List l = new List(100);
+        Node node = findClosest(x);
+        while(node != null && node.key <= y )
+        {
+            if(node.key >= x)
+                l.append(node);
+            node = findNext(node);
+        }        
+        
+        
+        return l;
+    }
+    
+    
+    public Tree(){} // .Dummy constructor (No need to edit)
+}
