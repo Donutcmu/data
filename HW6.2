@@ -1,0 +1,145 @@
+public class Tree extends BTreePrinter{ // Fix this
+  Node root;
+    
+  public Tree(Node root){
+      // fix this
+      this.root = root;
+  }
+  
+  public void printTree(){
+      // Pls use codes from the previous problem
+      if(root != null)
+        super.printTree(root);
+      else
+        System.out.println("Empty tree!!!");
+  }
+
+  public static void printNode(Node node){
+      // Pls use codes from the previous problem
+      if(node == null)
+      {
+          System.out.println("Node not found!!!");
+      }
+      else
+      {
+          System.out.println(node.key);
+      }
+  }
+  
+
+  public static Node findClosestLeaf(Node node, int search_key){
+      // Pls use codes from the previous problem
+    if (node == null) {
+        return null;
+    }
+    
+    Node closetLeaf = node;
+    if(node.left == null || node.right == null)
+    {
+        closetLeaf = node;
+    }
+    
+    if(node.left != null && node.key > search_key)
+    {
+        return findClosestLeaf(node.left,search_key);
+    }
+    else if(node.right != null && node.key < search_key)
+    {
+        return findClosestLeaf(node.right,search_key);
+    }
+      // this function should be recursive
+    return closetLeaf;
+  }
+
+  public void insertKey(int key) {
+      // Implement insertKey() using the non-recursive version
+      // This function should call findClosestLeaf()
+      Node InsertRoot = findClosestLeaf(root,key);
+      if(InsertRoot == null)
+      {
+          root = new Node(key);
+          return;
+      }
+      
+      if(InsertRoot.key == key)
+      {
+          System.out.println("Duplicated key!!!");
+          return;
+      }
+      
+      
+      if(InsertRoot.key > key)
+      {
+         InsertRoot.left = new Node(key);
+      }
+      if(InsertRoot.key < key)
+      {
+          InsertRoot.right = new Node(key);
+      }
+    }
+    
+  
+  public void printPreOrderDFT(){
+      System.out.print("PreOrder DFT node sequence [ ");
+      printPreOrderDFT(root);
+      // Call the recursive version
+      System.out.println("]");
+  }
+  
+  public static void printPreOrderDFT(Node node){
+      // this function should be recursive
+      if(node == null)
+        return;
+      else
+      {
+          System.out.print(node.key + " ");
+          printPreOrderDFT(node.left);
+          printPreOrderDFT(node.right);
+      }
+  }
+  
+  public void printInOrderDFT(){
+      System.out.print("InOrder DFT node sequence [ ");
+      printInOrderDFT(root);
+      // Call the recursive version
+      System.out.println("]");
+  }
+  
+  public static void printInOrderDFT(Node node){
+      // this function should be recursive
+    if(node == null)
+    {
+        return;
+    }
+        
+    else
+    {
+        printInOrderDFT(node.left);
+        System.out.print(node.key + " ");
+        printInOrderDFT(node.right);
+    }
+  }
+  
+  public void printPostOrderDFT(){
+      System.out.print("PostOrder DFT node sequence [ ");
+      // Call the recursive version
+      printPostOrderDFT(root);
+      System.out.println("]");
+  }
+  
+  public static void printPostOrderDFT(Node node){
+      // this function should be recursive
+      if(node == null)
+      {
+         return;
+      }
+      else
+      {
+          printPostOrderDFT(node.left);
+          printPostOrderDFT(node.right);
+          System.out.print(node.key + " ");
+      }
+  }
+  
+  public Tree(){} // Dummy constructor (No need to edit)
+}
