@@ -1,0 +1,73 @@
+public class BSTree extends BTreePrinter{
+  Node root;
+    
+  public void singleRotateFromLeft(Node y) {
+      // Do something
+      Node x = y.left;
+      Node w = y.parent;
+      y.left = x.right;
+      if(y.left != null)
+        y.left.parent = y;
+      x.right = y;
+      y.parent = x;
+      if(y == root)
+        root = x;
+      else
+      {
+        if(w != null)
+        {
+            if(w.left == y)
+                w.left = x;
+            else
+                w.right = x;
+        }
+        x.parent = w;
+      }
+        
+        
+  }
+
+  public void singleRotateFromRight(Node y) {
+      // Do something
+      Node x = y.right;
+      Node w = y.parent;
+      y.right = x.left;
+      if(y.right != null)
+        y.right.parent = y;
+      x.left = y;
+      y.parent = x;
+      if(y == root)
+        root = x;
+      else
+      {
+        if(w != null)
+        {
+            if(w.right == y)
+                w.right = x;
+            else
+                w.left = x;
+        }
+        x.parent = w;
+      }
+  }
+  
+  public void insertKey(int key) {
+      if (root == null) {
+          root = new Node(key);
+      } else {
+          Main.insertKey(root, key);
+      }
+  }
+  
+  public void printTree() {
+      if (root == null) {
+          System.out.println("Empty tree!!!");
+      } else {
+          super.printTree(root);
+      }
+  }
+
+  public Node findKey(int search_key) {
+      return Main.findKey(root, search_key);
+  }
+}
