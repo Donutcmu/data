@@ -1,0 +1,87 @@
+public class Tree {
+    Node root;
+
+    public Tree(Node root) {
+        this.root = root; // ค่าrootของtree=ค่าrootที่รับมา
+    }
+
+    public Tree() {}
+
+    public void printTree() { //ปริ้นเเสดงผล
+        if (root == null) {   //ถ้าtreeว่าง
+            System.out.println("Empty tree!!!"); 
+        } else {
+            BTreePrinter bTreePrinter = new BTreePrinter();
+            bTreePrinter.printTree(root);
+        }
+    }
+
+    public void deleteKey(int key) { //ลบ Node
+        if (root == null) { //เช็คว่าrootว่างไหม
+            System.out.println("Empty Tree!!!"); 
+        }
+        else if (findKey(root, key) == null) { // เช็คว่าในtreeมีkeyที่ต้องการหาไหม
+            System.out.println("Key not found!!!");
+        }
+        else { // ถ้าไม่ใช่ส่งให้fanction deletekey
+            root = deleteKey(root, key); 
+        }
+    }
+
+    public static Node deleteKey(Node node, int key) {
+        if (node == null) { //เช็คว่า Node ว่างไหม
+            return null;
+        }
+
+        if (key < node.key) { //ถ้า key น้อยกว่า keyที่อยู่ในNodeให้ไปnodeด้านซ้าย
+            node.left = deleteKey(node.left, key);
+        } else if (key > node.key) {//ถ้า key มากกว่า keyที่อยู่ในNodeให้ไปnodeด้านขวา
+            node.right = deleteKey(node.right, key);
+        } else {
+            if (node.left == null && node.right == null) { //ถ้าnodeซ้ายเเละขวาว่าง return null
+                return null;
+            }
+
+            if (node.left == null) { // ถ้าว่างเเค่ด้านซ้ายให้return Node.right
+                return node.right;
+            }
+
+            if (node.right == null) {// ถ้าว่างเเค่ด้านขวาให้return Node.left
+                return node.left;
+            }
+
+            Node minNode = findMin(node.right); // หาค่าน้อยสุดของnodeด้านขวา
+            node.key = minNode.key; // ให้Nodeมีค่าเท่ากับค่าน้อยสุดของด้านขวา
+            node.right = deleteKey(node.right, minNode.key); //ให้node.right=node.rightที่ลบminnodeไปเเล้ว
+        }
+
+        return node;
+    }
+
+    public static Node findMin(Node node) { // หาค่าที่น้อยที่สุด
+        if (node == null) { //ถ้าNodeว่างreturn null
+            return null;
+        }
+        while (node.left != null) { //วนลงด้านซ้ายเรื่อยๆจนสุด
+            node = node.left;
+        }
+        return node; //return node ที่น้อยที่สุด
+    }
+
+    public Node findKey(int search_key) { //หาว่าtreeมีค่าkeyไหม
+        return findKey(root, search_key); //reutrn funtionที่รับตัวเเปล2ตัว
+    }
+    public static Node findKey(Node node, int search_key) { //หาว่าtreeมีค่าkeyไหม
+            if (node == null) { //ไม่มีreturn null
+                return null;
+            }
+            if (node.key == search_key) { //ถ้าเจอkeyที่ตรงกับnodeให้return node นั้นออกมา
+                return node;
+            }
+            if (search_key < node.key) { // ถ้าkeyที่ต้องการsearchน้อยกว่าnode.keyให้return function findkeyเเต่ใส่ค่าเป็นด้านซ้ายของnode
+                return findKey(node.left, search_key);
+            } else {// ถ้าkeyที่ต้องการsearchมากกว่าnode.keyให้return function findkeyเเต่ใส่ค่าเป็นด้านขวาของnode
+                return findKey(node.right, search_key);
+            }
+
+}
