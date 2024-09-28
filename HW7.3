@@ -1,201 +1,142 @@
-public class AVLTree extends BTreePrinter{
-    Node root;
+public class Tree extends BTreePrinter{ // Fix this
+  Node root;
+  
+  public Tree(Node root){
+      this.root = root;
+  }
+  
+  public Tree(){} // Dummy constructor (No need to edit)
 
-    public void singleRotateFromLeft(Node y) {
-        // Pls copy the code from the previous problem
-      Node x = y.left;
-      Node w = y.parent;
-      y.left = x.right;
-      if(y.left != null)
-        y.left.parent = y;
-      x.right = y;
-      y.parent = x;
-      if(y == root)
-        root = x;
+  
+  public void printTree(){
+      // Pls use codes from the previous problem
+      if(root != null)
+        super.printTree(root);
       else
-      {
-        if(w != null)
-        {
-            if(w.left == y)
-                w.left = x;
-            else
-                w.right = x;
-        }
-        x.parent = w;
-      }
-    }
+        System.out.println("Empty tree!!!");
+  }
 
-    public void singleRotateFromRight(Node y) {
-        // Pls copy the code from the previous problem
-      Node x = y.right;
-      Node w = y.parent;
-      y.right = x.left;
-      if(y.right != null)
-        y.right.parent = y;
-      x.left = y;
-      y.parent = x;
-      if(y == root)
-        root = x;
-      else
+  public Node findKey(int search_key){
+      // Pls use codes from the previous problem
+      Node current = root;
+      return findKey(current,search_key);
+  }
+  
+  public static Node findKey(Node node, int search_key){
+      // Pls use codes from the previous problem
+      if(node == null) 
       {
-        if(w != null)
-        {
-            if(w.right == y)
-                w.right = x;
-            else
-                w.left = x;
-        }
-        x.parent = w;
+          return null;
       }
-    }
-
-    public void doubleRotateFromLeft(Node y) {
-        // Pls copy the code from the previous problem
-      Node x = y.left;
-      Node z = x.right;
-      Node w = y.parent;
       
-      x.right = z.left;
-        if(x.right != null)
-          x.right.parent = x;
-        z.left = x;
-        z.parent = x;
-          if(y != null)
-          {
-              if(y.right == x)
-                  y.right = z;
-              else
-                  y.left = z;
-          }
-          z.parent = y;
-
-      y.left = z.right;
-      if(y.left != null)
-        y.left.parent = y;
-      z.right = y;
-      y.parent = z;
-      if(y == root)
-        root = z;
+      if(node.key == search_key) 
+      {
+          return node;
+      }
+      if(node.key > search_key)  
+      {
+          return findKey(node.left, search_key);
+      } 
       else
       {
-        if(w != null)
-        {
-            if(w.left == y)
-                w.left = z;
-            else
-                w.right = z;
-        }
-        z.parent = w;
+          return findKey(node.right, search_key);
       }
-    }
+  }
 
-    public void doubleRotateFromRight(Node y) {
-        // Pls copy the code from the previous problem
-      Node x = y.right;
-      Node z = x.left;
-      Node w = y.parent;
-      
-      x.left = z.right;
-        if(x.left != null)
-          x.left.parent = x;
-        z.right = x;
-        z.parent = x;
-          if(y != null)
-          {
-              if(y.left == x)
-                  y.left = z;
-              else
-                  y.right = z;
-          }
-          z.parent = y;
-
-      y.right = z.left;
-      if(y.right != null)
-        y.right.parent = y;
-      z.left = y;
-      y.parent = z;
-      if(y == root)
-        root = z;
+  public static Node findMin(Node node){
+      // Pls use codes from the previous problem
+      if(node.left != null)
+        {
+            return findMin(node.left);
+        }
       else
       {
-        if(w != null)
-        {
-            if(w.right == y)
-                w.right = z;
-            else
-                w.left = z;
-        }
-        z.parent = w;
+          return node;
       }
+  }
+  
+  
+  // This function is for deleting the root node
+  // If the node is not the root, please call the recursive version
+  public void deleteKey(int key) {
+      // There should be 6 cases here
+      // Non-root nodes should be forwarded to the static function
+    if (root == null) {
+        System.out.println("Empty Tree!!!");
+        return;
+    }
+  
+      Node nodeToDelete = findKey(key);  // Find the node to delete
+    if (nodeToDelete == null) {
+        System.out.println("Key not found!!!");
+        return;  // Key not found, nothing to delete
     }
 
-    public static void rebalance(AVLTree tree, Node node){
-        int balanceFactor = height(node.left) - height(node.right);              // Calculate balanceFactor
-        if (Math.abs(balanceFactor) > 1){                          // Use balanceFactor to check if unbalanced?
-            if (balanceFactor > 1){                      // Use balanceFactor to check if left heavy?
-                if (height(node.left.left) >= height(node.left.right)){                  // Use the grandchild to check if Outer or Inner?
-                    System.out.println("Perform SingleRotationFromLeft(Node " + node.key +")");   // Fix ??? and call a function
-                    tree.singleRotateFromLeft(node);
-                }else{
-                    System.out.println("Perform DoubleRotationFromLeft(Node " + node.key +")");   // Fix ??? and call a function
-                    tree.doubleRotateFromLeft(node);
-                }
-            }else{
-                if (height(node.right.right) >= height(node.right.left)){                  // Use the grandchild to check if Outer or Inner?
-                    System.out.println("Perform SingleRotationFromRight(Node " + node.key +")");   // Fix this and call a function
-                    tree.singleRotateFromRight(node);
-                }else{
-                    System.out.println("Perform DoubleRotationFromRight(Node " + node.key +")");   // Fix this and call a function
-                    tree.doubleRotateFromRight(node);
-                }
-            }
-        }
-    }
+    // Case 1: The tree is empty
     
-    // Fix this function to have the rebalancing feature
-    // There should be rebalance() function calling somewhere in the code
-    public static void insertKey(AVLTree tree, Node node, int key) {
-        if (key == node.key) {
-            System.out.println("Duplicated key:" + key);
-        }else if (key < node.key) {//Go left
-            if (node.left == null) {
-                node.left = new Node(key);
-                node.left.parent = node;
-            }else {
-                insertKey(tree, node.left, key);
-            }
-            
-        }else{  // Go right
-            if (node.right == null) {
-                node.right = new Node(key);
-                node.right.parent = node;
-            }else {
-                insertKey(tree, node.right, key);
-            }
+    // If the node to delete is the root
+    if (nodeToDelete == root) {
+        // Case 2: The root has no children (leaf)
+        if (root.left == null && root.right == null) {
+            root = null;  // Tree becomes empty
         }
-        rebalance(tree,node);
+        // Case 3: The root has only a left child
+        else if (root.left != null && root.right == null) {
+            root = root.left;
+            root.parent = null;
+        }
+        // Case 4: The root has only a right child
+        else if (root.right != null && root.left == null) {
+            root = root.right;
+            root.parent = null;
+        }
+        // Case 5 and 6: The root has two children
+        else {
+            Node successor = findMin(root.right);  // Find in-order successor
+            root.key = successor.key;  // Replace the root's key with the successor's key
+            deleteKey(successor);  // Delete the successor recursively
+        }
+    } 
+    // If nodeToDelete is not the root, call the recursive version
+    else {
+        deleteKey(nodeToDelete);
     }
-    
-    // This function is complete, no need to edit
-    public void insertKey(int key) {
-        if (root == null) {
-            root = new Node(key);
+  }
+  
+  // Use this function to delete non-root nodes
+  public static void deleteKey(Node node){
+      // There should be 7 cases here
+      if (node.left == null && node.right == null) {
+        if (node == node.parent.left) {
+            node.parent.left = null;  // Remove node as left child
         } else {
-            insertKey(this, root, key);
+            node.parent.right = null;  // Remove node as right child
         }
     }
-    
-    // This function is complete, no need to edit
-    public Node findKey(int search_key) {
-        return Main.findKey(root, search_key);
+    // Case 2: Node has only a left child
+    else if (node.left != null && node.right == null) {
+        if (node == node.parent.left) {
+            node.parent.left = node.left;  // Replace node with its left child
+        } else {
+            node.parent.right = node.left;
+        }
+        node.left.parent = node.parent;
     }
-
-    // Use this function to check the node height
-    // This function is complete, no need to edit
-    public static int height(Node node){
-        if (node == null)
-            return -1;
-        else
-            return 1 + Math.max(height(node.left), height(node.right));
+    // Case 3: Node has only a right child
+    else if (node.right != null && node.left == null) {
+        if (node == node.parent.left) {
+            node.parent.left = node.right;  // Replace node with its right child
+        } else {
+            node.parent.right = node.right;
+        }
+        node.right.parent = node.parent;
     }
+    // Case 4 & 5: Node has two children
+    else {
+        Node successor = findMin(node.right);  // Find in-order successor
+        node.key = successor.key;  // Replace node's key with the successor's key
+        deleteKey(successor);  // Recursively delete the successor
+    }
+  }
+  
 }
