@@ -66,40 +66,34 @@ public class Tree extends BTreePrinter{ // Fix this
         return;
     }
   
-      Node nodeToDelete = findKey(key);  // Find the node to delete
-    if (nodeToDelete == null) {
+      Node node = findKey(key);  // Find the node to delete
+    if (node == null) {
         System.out.println("Key not found!!!");
         return;  // Key not found, nothing to delete
     }
 
-    // Case 1: The tree is empty
     
     // If the node to delete is the root
-    if (nodeToDelete == root) {
-        // Case 2: The root has no children (leaf)
+    if (node == root) {
         if (root.left == null && root.right == null) {
-            root = null;  // Tree becomes empty
+            root = null;
         }
-        // Case 3: The root has only a left child
         else if (root.left != null && root.right == null) {
             root = root.left;
             root.parent = null;
         }
-        // Case 4: The root has only a right child
         else if (root.right != null && root.left == null) {
             root = root.right;
             root.parent = null;
         }
-        // Case 5 and 6: The root has two children
         else {
-            Node successor = findMin(root.right);  // Find in-order successor
-            root.key = successor.key;  // Replace the root's key with the successor's key
-            deleteKey(successor);  // Delete the successor recursively
+            Node minNode = findMin(root.right); 
+            root.key = minNode.key; 
+            deleteKey(minNode);  
         }
     } 
-    // If nodeToDelete is not the root, call the recursive version
     else {
-        deleteKey(nodeToDelete);
+        deleteKey(node);
     }
   }
   
@@ -108,34 +102,31 @@ public class Tree extends BTreePrinter{ // Fix this
       // There should be 7 cases here
       if (node.left == null && node.right == null) {
         if (node == node.parent.left) {
-            node.parent.left = null;  // Remove node as left child
+            node.parent.left = null; 
         } else {
-            node.parent.right = null;  // Remove node as right child
+            node.parent.right = null; 
         }
     }
-    // Case 2: Node has only a left child
     else if (node.left != null && node.right == null) {
         if (node == node.parent.left) {
-            node.parent.left = node.left;  // Replace node with its left child
+            node.parent.left = node.left; 
         } else {
             node.parent.right = node.left;
         }
         node.left.parent = node.parent;
     }
-    // Case 3: Node has only a right child
     else if (node.right != null && node.left == null) {
         if (node == node.parent.left) {
-            node.parent.left = node.right;  // Replace node with its right child
+            node.parent.left = node.right; 
         } else {
             node.parent.right = node.right;
         }
         node.right.parent = node.parent;
     }
-    // Case 4 & 5: Node has two children
     else {
-        Node successor = findMin(node.right);  // Find in-order successor
-        node.key = successor.key;  // Replace node's key with the successor's key
-        deleteKey(successor);  // Recursively delete the successor
+        Node minNode = findMin(node.right);
+        node.key = minNode.key;
+        deleteKey(minNode);
     }
   }
   
