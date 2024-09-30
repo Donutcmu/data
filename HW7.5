@@ -1,0 +1,237 @@
+public class BSTree extends BTreePrinter{
+    Node root;
+
+    public static Node findKey(Node node, int search_key) {
+      if(node == null) 
+      {
+          return null;
+          //ถ้าnodeว่างจะทำการreturn nullกลับไป
+      }
+      
+      if(node.key == search_key) 
+      {
+          return node;
+          //ถ้าเจอnodeที่มีkey=search_keyแล้วจะreturn nodeนี้ออกไป
+      }
+      if(node.key > search_key)  
+      {
+          return findKey(node.left, search_key);
+          //ถ้าkeyของตัวนี้มีค่ามากกว่าsearch_keyให้เรียกตัวเองอีกครั้งโดยnodeที่ใส่เข้าไปจะเป็นnodeทางซ้าย
+          //เพราะจะได้เจอกับnodeที่มีkeyน้อยลง
+      } 
+      else
+      {
+          return findKey(node.right, search_key);
+          //ถ้าkeyของตัวนี้มีค่าน้อยกว่าsearch_keyให้เรียกตัวเองอีกครั้งโดยnodeที่ใส่เข้าไปจะเป็นnodeขวา
+          //เพราะจะได้เจอกับnodeที่มีkeyมากกว่าkeyปัจจุบัน
+      }
+    }
+
+    public static Node findMin(Node node){
+        if(node.left != null)
+        {
+            return findMin(node.left);
+            //ถ้าลูกทางซ้ายของtreeยังมีอยู่ก็ให้เรียกใช้ตัวเองต่อ
+            //ที่ต้องเรียกทางซ้ายไปเรื่อยๆก็เพราะตามBTแล้วค่าที่น้อยที่สุดจะอยู่ทางซ้าย
+
+        }
+        else
+        {
+            return node;
+            //ถ้าลูกของnodeทางซ้าย=null ก็จะทำการreturn nodeนี้ออกไปเพราะnodeนี้คือตัวที่อยู่ท้ายสุดแล้ว
+        }
+    }
+
+    public static Node findMax(Node node){
+        if(node.right != null)
+        {
+            return findMax(node.right);
+            //ถ้าลูกทางขวาของnodeปัจจุบันยังมีอยู่ก็ให้เรียกใช้ฟังก์ชันนี้อีกรอบโดยใส่nodeลูกของทางขวาของnodeปัจจุบันเข้าไป
+            //ต้องเรียกไปทางขวาเรื่อยๆก็เพราะว่าจามBTแล้วค่าที่มากที่สุดจะอยู่ทางขวา
+        }
+        else{
+          return node;
+            //หมายความว่าตัวนี้คือตัวที่อยู่ขวาสุดแล้วมีค่ามากที่สุดแล้วให้return nodeนี้กลับไป
+        }
+    }
+
+    public void insertKey(int key) {
+        // Pls implement this insertKey() using the recursive technique
+        // This is similiar to findKey() but can insert node to the null node
+        if (root == null) {
+            root = new Node(key);
+        } else {
+            insertKey(root, key); 
+        }
+    }
+
+    public static void insertKey(Node node, int key) {
+        // Pls copy the code from the previous homework
+        if(node == null)
+        {
+            node = new Node(key);
+            return;
+        }
+      
+        if(node.key == key)
+        {
+            System.out.println("Duplicated key!!!");
+            return;
+        }
+      
+      
+        if(node.key > key)
+        {
+           if (node.left == null) 
+           {
+                node.left = new Node(key);  
+                node.left.parent = node;
+            } 
+            else 
+            {
+                insertKey(node.left, key);
+            }
+        }
+        if(node.key < key)
+        {
+           if (node.right == null) 
+           {
+                node.right = new Node(key);  
+                node.right.parent = node;
+            } 
+            else 
+            {
+                insertKey(node.right, key);
+            }
+         
+        }
+    }
+    
+    public void deleteKey(int key) {
+        if (root == null) 
+        {
+            System.out.println("Empty Tree!!!");
+            return;
+        }
+      
+        Node node = findKey(root,key); 
+        if (node == null) 
+        {
+            System.out.println("Key not found!!!");
+            return; 
+        }
+    
+        
+        // If the node to delete is the root
+        if (node == root) 
+        {
+            if (root.left == null && root.right == null) 
+            {
+                root = null;
+            }
+            else if (root.left != null && root.right == null) 
+            {
+                root = root.left;
+                root.parent = null;
+            }
+            else if (root.right != null && root.left == null) 
+            {
+                root = root.right;
+                root.parent = null;
+            }
+            else 
+            {
+                Node minNode = findMin(root.right); 
+                root.key = minNode.key; 
+                deleteKey(minNode);  
+            }
+        } 
+        else 
+        {
+            deleteKey(node);
+        }
+    }
+    
+    public static void deleteKey(Node node){
+      if (node.left == null && node.right == null) 
+      {
+        if (node == node.parent.left) 
+        {
+            node.parent.left = null; 
+        } 
+        else 
+        {
+            node.parent.right = null; 
+        }
+      }
+      else if (node.left != null && node.right == null) 
+      {
+          if (node == node.parent.left) 
+          {
+              node.parent.left = node.left; 
+          } 
+          else 
+          {
+              node.parent.right = node.left;
+          }
+          node.left.parent = node.parent;
+      }
+      else if (node.right != null && node.left == null) 
+      {
+          if (node == node.parent.left) 
+          {
+              node.parent.left = node.right; 
+          } 
+          else 
+          {
+              node.parent.right = node.right;
+          }
+          node.right.parent = node.parent;
+      }
+      else 
+      {
+          Node minNode = findMin(node.right);
+          node.key = minNode.key;
+          deleteKey(minNode);
+      }
+    }
+    
+    public static boolean isMergeable(Node r1, Node r2){
+        if(findMax(r1).key < findMin(r2).key)
+            return true;
+        else
+            return false;
+    }
+
+    public static Node mergeWithRoot(Node r1, Node r2, Node t){
+        if (isMergeable(r1, r2)) {
+            t.left = r1;
+            t.right = r2;
+            r1.parent = t;
+            r2.parent = t;
+            return t;
+        } else {
+            System.out.println("All nodes in T1 must be smaller than all nodes from T2");
+            return null;
+        }
+    }
+    
+    public void merge(BSTree tree2){
+        if (isMergeable(this.root, tree2.root)){
+            Node t = findMax(this.root);
+            deleteKey(t.key);
+            this.root = mergeWithRoot(this.root,tree2.root,t);
+        }else{
+            System.out.println("All nodes in T1 must be smaller than all nodes from T2");
+        }
+    }
+
+    // This function is complete, no need to edit
+    public void printTree() {
+        if (root == null) {
+            System.out.println("Empty tree!!!");
+        } else {
+            super.printTree(root);
+        }
+    }
+}
