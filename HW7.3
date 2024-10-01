@@ -109,7 +109,7 @@ public class AVLTree extends BTreePrinter{
         //ตอนนี้zอยู่บนสุดก็ให้parentชี้กลับไปที่w
       }    
     }
-
+}
     public void doubleRotateFromRight(Node y) {
         // Pls copy the code from the previous problem
       Node x = y.right;//ให้ x มีค่าเท่ากับnodeทางซ้ายของy
@@ -189,33 +189,39 @@ public class AVLTree extends BTreePrinter{
         if (key == node.key) 
         {
             System.out.println("Duplicated key:" + key);
+            //ถ้ามีkeyซ้ำให้printออกมา
         }
-        else if (key < node.key) 
+        else if (key < node.key) //ถ้าkeyที่รับมาน้อยกว่าkeyของปัจจุบันที่recursiveอยู่
         {
-            if (node.left == null) 
+
+            if (node.left == null) //ถ้าไม่มีลูกทางซ้ายเหลืออยู่แล้ว
             {
                 node.left = new Node(key);
                 node.left.parent = node;
+                //ให้สร้างnodeใหม่มาต่อทางซ้ายแล้วให้parentชี้กลับไปที่nodeปัจจุบัน
             }
             else 
             {
                 insertKey(tree, node.left, key);
+                //ถ้ายังมีอยู่ให้recursiveอีกครั้ง
             }
             
         }
-        else
+        else////หมายความว่าkeyที่รับมามากกว่าkeyของปัจจุบันที่recursiveอยู่
         { 
-            if (node.right == null) 
+            if (node.right == null) //ถ้าไม่มีลูกทางขวาเหลืออยู่แล้ว
             {
                 node.right = new Node(key);
                 node.right.parent = node;
+                //ให้สร้างnodeใหม่มาต่อทางขวาแล้วให้parentชี้กลับไปที่nodeปัจจุบัน
             }
             else 
             {
                 insertKey(tree, node.right, key);
+                //ถ้ายังมีอยู่ให้recursiveอีกครั้ง
             }
         }
-        rebalance(tree,node);
+        rebalance(tree,node);//เรียกrebalanceเพื่อปรับสมดุล
     }
     
     // This function is complete, no need to edit
