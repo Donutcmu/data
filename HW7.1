@@ -3,51 +3,62 @@ public class BSTree extends BTreePrinter{
     
   public void singleRotateFromLeft(Node y) {
       // Do something
-      Node x = y.left;
-      Node w = y.parent;
-      y.left = x.right;
+      Node x = y.left;//ให้Node x ที่สร้างขึ้นมาใหม่ไปต่อทางซ้ายของ y
+      Node w = y.parent;//ให้Node w ไปเป็นparentของNode y เพื่อเป็นตัวเก็บparentแทนชั่วคราว
+      y.left = x.right;//ให้ทางซ้ายของ y ไปชี้แทนทางขวาของx
       if(y.left != null)
+        //ถ้าทางซ้ายของ y มีnodeต่ออยู่
         y.left.parent = y;
-      x.right = y;
-      y.parent = x;
+        //ให้ตัวทางซ้ายที่yชี้อยู่ในรูปคือx2ชี้กลับมาที่y
+      x.right = y;  //ให้ทางขวาของxชี้มาที่y ก็คือตอนนี้y จะกลายเป็นลูกที่อยู่ทางขวาของ x
+      y.parent = x;//ให้parentของy ชี้ไปที่x
       if(y == root)
         root = x;
+        //ถ้าyเป็นrootอยู่ก็ให้xเป็นแทน
       else
       {
         if(w != null)
         {
+            //ถ้าเกิดว่ามีตัวที่yเคยมีparentที่ชี้มาหาก็คือyไม่ใช่rootในตอนแรกและมีตัวที่อยู่ชี้มาหาy
             if(w.left == y)
                 w.left = x;
+                //ถ้าyเคยอยู่ทางซ้ายของต้วนั้น(w)ก็ให้xไปอยู่ทางซ้ายของตัวนั้นแทน
             else
                 w.right = x;
+                //ถ้าyเคยอยู่ทางขวาของตัวนั้น(w)ก็ให้xไปอยู่ทางขวาของตัวนั้นแทน
         }
         x.parent = w;
-      }
-        
-        
+        //ถ้า y ไม่ใช่root ก็ให้parentของxชี้ไปที่ตัวที่parentของyเคยชี้ไว้
+  }
   }
 
   public void singleRotateFromRight(Node y) {
       // Do something
-      Node x = y.right;
-      Node w = y.parent;
-      y.right = x.left;
+      Node x = y.right;//ให้Node x ที่สร้างขึ้นมาใหม่ไปต่อทางขวาของy
+      Node w = y.parent;//ให้Node w ไปเป็นparentของNodeเพื่อเก็บค่าparentชั่วคราว
+      y.right = x.left;//ให้ทางขวาของyไปชี้ที่่ทางซ้ายของx
       if(y.right != null)
-        y.right.parent = y;
-      x.left = y;
-      y.parent = x;
+        //ถ้าหากทางขวาของyมีnodeที่ชี้ไปอยู่
+        y.right.parent = y;//ให้ตัวนั้นชี้กลับมาที่yเพื่อกำหนดparent
+      x.left = y;//ทางซ้ายของxชี้มาที่y
+      y.parent = x;//ให้yชี้กลับไปที่xเพื่อกำหนดparent
       if(y == root)
         root = x;
+        //ถ้าyเป็นrootอยู่ก็ให้xเป็นแทน
       else
       {
         if(w != null)
+        //หมายความว่าyไม่ใช่rootและมีตัวที่ชี้มาหาyก็คือwซึ่งแทนด้วยw
         {
             if(w.right == y)
                 w.right = x;
+                //ถ้าyเคยอยู่ทางขวาของwก็ให้xไปอยู่แทนโดยให้ตัวนั้นทางขวาชี้มาที่x
             else
                 w.left = x;
+                //ถ้าyเคยอยู่ทางซ้ายของwก็ให้xไปอยู่แทนโดยให้ตัวนั้นทางซ้ายชี้มาที่x
         }
         x.parent = w;
+        //ให้parentของxชี้กลับไปที่w
       }
   }
   
