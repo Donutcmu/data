@@ -246,54 +246,74 @@ public class AVLTree extends BTreePrinter{
     public static void deleteKey(AVLTree tree, Node node){
         // Pls copy the code from the previous homework
         // Add code segments to enable the rebalancing feature
-          if (node.left == null && node.right == null) 
+          if (node.left == null && node.right == null) //ถ้าnodeไม่มีลูก
           {
-            if (node == node.parent.left) 
+            if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
             {
                 node.parent.left = null; 
+                //ก็ให้ทางซ้ายของparentชี้ไปที่null
             } 
             else 
             {
+                //หมายความว่าnodeนี้อยู่ทางขวาของparent
                 node.parent.right = null; 
+                //ก็ให้ทางขวาของparentชี้ไปที่null
             }
           }
           else if (node.left != null && node.right == null) 
           {
-              if (node == node.parent.left) 
+            //ถ้าnodeมีลูกแค่ทางซ้าย
+              if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
               {
                   node.parent.left = node.left; 
+                  //ก็ให้ทางซ้ายของparentชี้ไปที่ลูกทางซ้ายของnode
+                  //nodeก็จะถูกลบออกไป
               } 
               else 
-              {
+              { 
+                //nodeนี้อยู่ทางขวาของparent
                   node.parent.right = node.left;
+                  //ก็ให้ทางขวาของparentชี้ไปที่ลูกทางซ้ายของnode
+                  //nodeก็จะถูกลบออกไป
+
               }
               node.left.parent = node.parent;
+              //ให้ลูกทางซ้ายของnodeชี้กลับไปที่parentของnode
           }
-          else if (node.right != null && node.left == null) 
+          else if (node.right != null && node.left == null) //ถ้าnodeมีลูกแค่ทางขวา
           {
-              if (node == node.parent.left) 
+              if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
               {
                   node.parent.left = node.right; 
+                  //ก็ให้ทางซ้ายของparentชี้ไปที่ลูกทางขวาของnode
+                  //nodeก็จะถูกลบออกไป
               } 
               else 
               {
                   node.parent.right = node.right;
+                  //ก็ให้ทางขวาของparentชี้ไปที่ลูกทางขวาของnode
+                  //nodeก็จะถูกลบออกไป
               }
               node.right.parent = node.parent;
+              //ให้ลูกทางขวาของnodeชี้กลับไปที่parentของnode
           }
           else 
           {
               Node minNode = findMin(node.right);
               node.key = minNode.key;
               deleteKey(tree,minNode);
+            //ถ้าnodeนี้มีลูกทั้งซ้ายและขวาให้หาตัวที่น้อยที่สุดจากฝั่งขวามาเป็นnodeแทน
+            //โดยจะให้keyจากตัวที่น้อยมาเป็นkeyของnodeแทนและลบnodeที่เอาkeyมาใช้ออก(nodeที่มีkeyน้อยที่สุดจากฝั่งขวา)
           }
           
-          while(node.parent != null)
+          while(node.parent != null)//จนกว่าnodeจะไม่มีparentก็คือroot
           {
               rebalance(tree, node.parent);
               node = node.parent;
               if(node.parent.parent == null)
                 break;
+                //ก็ให้rebalanceไปเรื่อยแล้วให้nodeกลายเป็นparentของตัวนั้นแทน
+                //ถ้าparentของparentเป็นnullให้break
           }
           
         }
