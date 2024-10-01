@@ -4,37 +4,40 @@ public class BSTree2 extends BTreePrinter{
     // Implement this function using iterative method
     // Do not use recursion
     public Node findKey(int search_key){
-        Node current = root;
+        Node current = root;//สร้างnode currentที่มีค่าเท่ากับroot
         while(current != null)
         {
             if(current.key == search_key)
-                return current;
+                return current;//ถ้าเจอnodeที่มีkeyที่ต้องการก็ให้returnเลย
             else if(current.key > search_key)
-                current = current.left;
+                current = current.left;//ถ้าเจอnodeที่มีkeyมากกว่าkeyให้ลงไปทางซ้ายของnodeนั้น
             else if(current.key < search_key)
-                current = current.right;
+                current = current.right;//ถ้าเจอnodeที่มีkeyน้อยกว่าkeyให้ลงไปทางขวาของnodeนั้น
         }
-        return null;
+        return null;//ถ้าหาไม่เจอให้return null
     }
 
     // Implement this function using iterative method
     // Do not use recursion
     public Node findMin(){
-        Node current = root;
+        Node current = root;//สร้างnode currentที่มีค่าเท่ากับroot
         while(current.left != null)
         {
             current = current.left;
+            //จนกว่าทางซ้ายของtreeจะเป็นnullให้ไปทางซ้ายเรื่อยๆจนถึงตัวสุดท้ายเพราะตัวที่อยู่ซ้ายสุดจะมีค่าน้อยสุด
         }
         return current;
+        //return current กลับไป
     }
 
     // Implement this function using iterative method
     // Do not use recursion
     public Node findMax(){
-        Node current = root;
+        Node current = root;//สร้างnode currentที่มีค่าเท่ากับroot
         while(current.right != null)
         {
             current = current.right;
+            //จนกว่าทางขวาของtreeจะเป็นnullให้ไปทางขวาเรื่อยๆจนถึงตัวสุดท้ายเพราะตัวที่อยู่ขวาสุดจะมีค่ามากสุด
         }
         return current;
     }
@@ -45,41 +48,50 @@ public class BSTree2 extends BTreePrinter{
         if(root == null)
         {
             root = new Node(key);
+            //ถ้าต้นไม้นี้เป็นต้นไม้ว่างให้สร้างroot nodeขึ้นมาโดยมีkey=keyที่รับเข้ามา
         }
-        Node ExistNode = findKey(key);
+        Node ExistNode = findKey(key);//เช็คว่ามีnodeซ้ำกันหรือไม่
         if(ExistNode != null)
         {
-            return;
+            return;//ถ้ามีก็return เลยไม่ต้องเพิ่ม
         }
         else
         {
-            Node current = root;
+            Node current = root;//สร้างnode currentมาเก็บrootเพื่อนำไปใช้
             while(current != null)
             {
-                Node parent = current;
+                //จนกว่าcurrentจะเป็นnull
+                Node parent = current;//เก็บparent
                 if(current.key > key)
+    
                 {
+                    //ถ้าเจอnodeที่มีkeyมากกว่าkey
                     if(current.left == null)
                     {
                         current.left = new Node(key);
                         current.left.parent = parent;
                         break;
+                        //ถ้าทางซ้ายของcurrentไม่มีตัวที่ชี้ไป ให้สร้างมาใหม่โดยมีkey=keyแล้วก็ให้parentชี้กลับมาแล้วออกลูปเลย
                     }
                     else
                         current = current.left;
+                        //ถ้าเจอnodeที่มีkeyมากกว่าkeyแล้วยังมีลูกทางซ้ายอยู่ให้ลงไปทางซ้ายของnodeนั้น
                 
                 }
 
                 if(current.key < key)
                 {
+                    //ถ้าเจอnodeที่มีkeyน้อยกว่าkey
                     if(current.right == null)
                     {
                         current.right = new Node(key);
                         current.right.parent = parent;
                         break;
+                        //ถ้าทางขวาของcurrentไม่มีตัวที่ชี้ไป ให้สร้างมาใหม่โดยมีkey=keyแล้วก็ให้parentชี้กลับมาแล้วออกลูปเลย
                     }
                     else
                         current = current.right;
+                        //ถ้าเจอnodeที่มีkeyน้อยกว่าkeyแล้วยังมีลูกทางขวาอยู่ให้ลงไปทางขวาของnodeนั้น
                 }
 
             }
