@@ -12,7 +12,7 @@ public class BSTree extends BTreePrinter{
         //ถ้า x ทางขวามีตัวที่ชี้ไปอยู่
           x.right.parent = x;//ก็ให้ตัวที่xชี้ไป ชี้กลับมาที่x
         z.left = x;//ให้ทางซ้ายของzชี้ไปที่x
-       
+        
           if(y != null)
           //ถ้า y ที่รับมาไม่ใช่null
           {
@@ -26,8 +26,8 @@ public class BSTree extends BTreePrinter{
           z.parent = y;//ให้parentของzชี้กลับไปที่y
 
       y.left = z.right;//ให้ทางซ้ายของyชี้ไปที่ทางขวาของz
-      if(y.left != null)
-        {y.left.parent = y;//ถ้าy.leftก็คือz.rightไม่ใช่nullก็ให้parentชี้กลับมาที่y}
+      if(y.left != null)y.left.parent = y;
+      //ถ้าy.leftก็คือz.rightไม่ใช่nullก็ให้parentชี้กลับมาที่y
       z.right = y;//ให้ทางขวาของzชี้ไปที่y ทีนี้zก็จะขึ้นไปอยู่บนสุดแล้ว
       y.parent = z;//ให้parentของyชี้กลับไปที่z
       if(y == root)
