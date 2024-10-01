@@ -60,8 +60,11 @@ public class BSTree extends BTreePrinter{
         // This is similiar to findKey() but can insert node to the null node
         if (root == null) {
             root = new Node(key);
+            //หมายความว่าtreeนี้ว่างให้เพิ่มเข้าไปได้เลย
+            //โดยการสร้างrootให้nodeที่มาเป็นrootมีkey = key
         } else {
             insertKey(root, key); 
+            //ถ้าไม่ใช่treeว่างให้recursive
         }
     }
 
@@ -71,37 +74,47 @@ public class BSTree extends BTreePrinter{
         {
             node = new Node(key);
             return;
+            //ถ้าหาnodeไม่เจอให้สร้างnodeใหม่เลย แล้วreturn
         }
       
         if(node.key == key)
         {
             System.out.println("Duplicated key!!!");
             return;
+            //ถ้ามีkeyตัวนั้นอยู่แล้วให้return แล้วprint "Duplicated key!!!"
         }
       
       
         if(node.key > key)
         {
+            //keyน้อยกว่าkeyของnodeปัจจุบัน
            if (node.left == null) 
            {
+                //nodeไม่มีลูกทางซ้าย
                 node.left = new Node(key);  
                 node.left.parent = node;
+                //ให้เพิ่มลูกทางซ้ายของnodeโดยมีkey=keyแล้วก็ชี้parentกลับไปหาnode
             } 
             else 
             {
                 insertKey(node.left, key);
+                //ถ้าnodeมีลูกทางซ้ายให้recursive
             }
         }
         if(node.key < key)
         {
+            //keyมากกว่าkeyของnodeปัจจุบัน
            if (node.right == null) 
            {
+                //nodeไม่มีลูกทางขวา
                 node.right = new Node(key);  
                 node.right.parent = node;
+                //ให้เพิ่มลูกทางขวาของnodeโดยมีkey=keyแล้วก็ชี้parentกลับไปหาnode
             } 
             else 
             {
                 insertKey(node.right, key);
+                //ถ้าnodeมีลูกทางขวาอยู่ให้recursive
             }
          
         }
@@ -112,93 +125,119 @@ public class BSTree extends BTreePrinter{
         {
             System.out.println("Empty Tree!!!");
             return;
+            //เช็คว่าต้นไม้เป็นต้นไม้ว่างมั้ย
         }
       
-        Node node = findKey(root,key); 
+        Node node = findKey(root,key); // เช็คว่าในtreeมีkeyที่ต้องการหาไหม
         if (node == null) 
         {
             System.out.println("Key not found!!!");
             return; 
+            //ถ้าไม่มี
         }
     
         
-        // If the node to delete is the root
-        if (node == root) 
+       
+        if (node == root) // ถ้าnodeที่ต้องการจะลบคือroot
         {
             if (root.left == null && root.right == null) 
             {
                 root = null;
+                //แปลว่าtreeนี้มีแค่rootก็ให้ลบทิ้งไปเลย
             }
             else if (root.left != null && root.right == null) 
             {
                 root = root.left;
                 root.parent = null;
+                //แปลว่าtreeนี้มีทางซ้ายแต่ไม่มีทางขวาให้ลูกทางซ้ายกลายเป็นrootแทน nodeที่เคยเป็นrootก็จะกลายเป็นnull
             }
             else if (root.right != null && root.left == null) 
             {
                 root = root.right;
                 root.parent = null;
+                //แปลว่าtreeนี้มีทางขวาแต่ไม่มีทางซ้ายให้ลูกทางขวากลายเป็นrootแทน nodeที่เคยเป็นrootก็จะกลายเป็นnull
             }
             else 
             {
                 Node minNode = findMin(root.right); 
                 root.key = minNode.key; 
                 deleteKey(minNode);  
+                //ถ้าnodeนี้เป็นrootแล้วมีลูกทั้งซ้ายและขวาให้หาตัวที่น้อยที่สุดจากฝั่งขวามาเป็นrootแทน
+                //โดยจะให้keyจากตัวที่น้อยมาเป็นkeyของrootแทนและลบnodeที่เอาkeyมาใช้ออก
             }
         } 
         else 
         {
             deleteKey(node);
+            //ถ้าไม่ใช่rootแล้วหาเจอก็ให้ลบออกเลย
         }
     }
     
     public static void deleteKey(Node node){
-      if (node.left == null && node.right == null) 
+      if (node.left == null && node.right == null) //ถ้าnodeไม่มีลูก
       {
-        if (node == node.parent.left) 
+        if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
         {
             node.parent.left = null; 
+            //ก็ให้ทางซ้ายของparentชี้ไปที่null
         } 
         else 
         {
+            //หมายความว่าnodeนี้อยู่ทางขวาของparent
             node.parent.right = null; 
+            //ก็ให้ทางขวาของparentชี้ไปที่null
         }
       }
       else if (node.left != null && node.right == null) 
       {
-          if (node == node.parent.left) 
+        //ถ้าnodeมีลูกแค่ทางซ้าย
+          if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
           {
               node.parent.left = node.left; 
+              //ก็ให้ทางซ้ายของparentชี้ไปที่ลูกทางซ้ายของnode
+              //nodeก็จะถูกลบออกไป
           } 
           else 
           {
+            //nodeนี้อยู่ทางขวาของparent
               node.parent.right = node.left;
+              //ก็ให้ทางขวาของparentชี้ไปที่ลูกทางซ้ายของnode
+              //nodeก็จะถูกลบออกไป
           }
           node.left.parent = node.parent;
+          //ให้ลูกทางซ้ายของnodeชี้กลับไปที่parentของnode
       }
       else if (node.right != null && node.left == null) 
       {
-          if (node == node.parent.left) 
+          if (node == node.parent.left) //nodeนี้อยู่ทางซ้ายของparent
           {
               node.parent.left = node.right; 
+              //ก็ให้ทางซ้ายของparentชี้ไปที่ลูกทางขวาของnode
+                  //nodeก็จะถูกลบออกไป
           } 
           else 
           {
               node.parent.right = node.right;
+              //ก็ให้ทางขวาของparentชี้ไปที่ลูกทางขวาของnode
+                  //nodeก็จะถูกลบออกไป
           }
           node.right.parent = node.parent;
+          //ให้ลูกทางขวาของnodeชี้กลับไปที่parentของnode
       }
       else 
       {
           Node minNode = findMin(node.right);
           node.key = minNode.key;
           deleteKey(minNode);
+          //ถ้าnodeนี้มีลูกทั้งซ้ายและขวาให้หาตัวที่น้อยที่สุดจากฝั่งขวามาเป็นnodeแทน
+            //โดยจะให้keyจากตัวที่น้อยมาเป็นkeyของnodeแทนและลบnodeที่เอาkeyมาใช้ออก(nodeที่มีkeyน้อยที่สุดจากฝั่งขวา)
       }
     }
     
     public static boolean isMergeable(Node r1, Node r2){
         if(findMax(r1).key < findMin(r2).key)
             return true;
+            //เช็คว่าทุกตัวในr1มีkeyน้อยกว่าทุกตัวในr2รึป่าว ถ้าใช่แปลว่าmergeได้ให้return true
         else
             return false;
     }
@@ -206,9 +245,13 @@ public class BSTree extends BTreePrinter{
     public static Node mergeWithRoot(Node r1, Node r2, Node t){
         if (isMergeable(r1, r2)) {
             t.left = r1;
+            //เอาr1ไปต่อทางซ้ายของt
             t.right = r2;
+            //เอาr2ไปต่อทางขวาของt
             r1.parent = t;
+            //ให้parentของr1ชี้กลับไปที่t
             r2.parent = t;
+            //ให้parentของr2ชี้กลับไปที่t
             return t;
         } else {
             System.out.println("All nodes in T1 must be smaller than all nodes from T2");
@@ -218,9 +261,11 @@ public class BSTree extends BTreePrinter{
     
     public void merge(BSTree tree2){
         if (isMergeable(this.root, tree2.root)){
-            Node t = findMax(this.root);
-            deleteKey(t.key);
+            //ถ้าmergeได้
+            Node t = findMax(this.root);//ให้หาnodeที่มีค่าสูงสุดในtree1
+            deleteKey(t.key);// ลบnodeที่มีค่าสูงสุดในtree1ออก
             this.root = mergeWithRoot(this.root,tree2.root,t);
+            //รวมtree1และtree2
         }else{
             System.out.println("All nodes in T1 must be smaller than all nodes from T2");
         }
