@@ -1,0 +1,98 @@
+public class BSTree2 extends BTreePrinter{
+    Node root;
+    
+    // Implement this function using iterative method
+    // Do not use recursion
+    public Node findKey(int search_key){
+        Node current = root;
+        while(current != null)
+        {
+            if(current.key == search_key)
+                return current;
+            else if(current.key > search_key)
+                current = current.left;
+            else if(current.key < search_key)
+                current = current.right;
+        }
+        return null;
+    }
+
+    // Implement this function using iterative method
+    // Do not use recursion
+    public Node findMin(){
+        Node current = root;
+        while(current.left != null)
+        {
+            current = current.left;
+        }
+        return current;
+    }
+
+    // Implement this function using iterative method
+    // Do not use recursion
+    public Node findMax(){
+        Node current = root;
+        while(current.right != null)
+        {
+            current = current.right;
+        }
+        return current;
+    }
+    
+    // Implement this function using iterative method
+    // Do not use recursion
+    public void insertKey(int key) {
+        if(root == null)
+        {
+            root = new Node(key);
+        }
+        Node ExistNode = findKey(key);
+        if(ExistNode != null)
+        {
+            return;
+        }
+        else
+        {
+            Node current = root;
+            while(current != null)
+            {
+                Node parent = current;
+                if(current.key > key)
+                {
+                    if(current.left == null)
+                    {
+                        current.left = new Node(key);
+                        current.left.parent = parent;
+                        break;
+                    }
+                    else
+                        current = current.left;
+                
+                }
+
+                if(current.key < key)
+                {
+                    if(current.right == null)
+                    {
+                        current.right = new Node(key);
+                        current.right.parent = parent;
+                        break;
+                    }
+                    else
+                        current = current.right;
+                }
+
+            }
+ 
+        }
+    }
+    
+    // This function is complete, no need to edit
+    public void printTree() {
+        if (root == null) {
+            System.out.println("Empty tree!!!");
+        } else {
+            super.printTree(root);
+        }
+    }
+}
