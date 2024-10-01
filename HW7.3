@@ -155,21 +155,32 @@ public class AVLTree extends BTreePrinter{
     // Fix this function to have the rebalancing feature
     // There should be rebalance() function calling somewhere in the code
     public static void insertKey(AVLTree tree, Node node, int key) {
-        if (key == node.key) {
+        if (key == node.key) 
+        {
             System.out.println("Duplicated key:" + key);
-        }else if (key < node.key) {//Go left
-            if (node.left == null) {
+        }
+        else if (key < node.key) 
+        {
+            if (node.left == null) 
+            {
                 node.left = new Node(key);
                 node.left.parent = node;
-            }else {
+            }
+            else 
+            {
                 insertKey(tree, node.left, key);
             }
             
-        }else{  // Go right
-            if (node.right == null) {
+        }
+        else
+        { 
+            if (node.right == null) 
+            {
                 node.right = new Node(key);
                 node.right.parent = node;
-            }else {
+            }
+            else 
+            {
                 insertKey(tree, node.right, key);
             }
         }
