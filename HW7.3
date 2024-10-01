@@ -3,129 +3,151 @@ public class AVLTree extends BTreePrinter{
 
     public void singleRotateFromLeft(Node y) {
         // Pls copy the code from the previous problem
-      Node x = y.left;
-      Node w = y.parent;
-      y.left = x.right;
+      Node x = y.left;//ให้Node x ที่สร้างขึ้นมาใหม่ไปต่อทางซ้ายของ y
+      Node w = y.parent;//ให้Node w ไปเป็นparentของNode y เพื่อเป็นตัวเก็บparentแทนชั่วคราว
+      y.left = x.right;//ให้ทางซ้ายของ y ไปชี้แทนทางขวาของx
       if(y.left != null)
+        //ถ้าทางซ้ายของ y มีnodeต่ออยู่
         y.left.parent = y;
-      x.right = y;
-      y.parent = x;
+        //ให้ตัวทางซ้ายที่yชี้อยู่ในรูปคือx2ชี้กลับมาที่y
+      x.right = y;  //ให้ทางขวาของxชี้มาที่y ก็คือตอนนี้y จะกลายเป็นลูกที่อยู่ทางขวาของ x
+      y.parent = x;//ให้parentของy ชี้ไปที่x
       if(y == root)
         root = x;
+        //ถ้าyเป็นrootอยู่ก็ให้xเป็นแทน
       else
       {
         if(w != null)
         {
+            //ถ้าเกิดว่ามีตัวที่yเคยมีparentที่ชี้มาหาก็คือyไม่ใช่rootในตอนแรกและมีตัวที่อยู่ชี้มาหาy
             if(w.left == y)
                 w.left = x;
+                //ถ้าyเคยอยู่ทางซ้ายของต้วนั้น(w)ก็ให้xไปอยู่ทางซ้ายของตัวนั้นแทน
             else
                 w.right = x;
+                //ถ้าyเคยอยู่ทางขวาของตัวนั้น(w)ก็ให้xไปอยู่ทางขวาของตัวนั้นแทน
         }
         x.parent = w;
-      }
-    }
+        //ถ้า y ไม่ใช่root ก็ให้parentของxชี้ไปที่ตัวที่parentของyเคยชี้ไว้
+    }}
 
     public void singleRotateFromRight(Node y) {
         // Pls copy the code from the previous problem
-      Node x = y.right;
-      Node w = y.parent;
-      y.right = x.left;
+      Node x = y.right;//ให้Node x ที่สร้างขึ้นมาใหม่ไปต่อทางขวาของy
+      Node w = y.parent;//ให้Node w ไปเป็นparentของNodeเพื่อเก็บค่าparentชั่วคราว
+      y.right = x.left;//ให้ทางขวาของyไปชี้ที่่ทางซ้ายของx
       if(y.right != null)
-        y.right.parent = y;
-      x.left = y;
-      y.parent = x;
+        //ถ้าหากทางขวาของyมีnodeที่ชี้ไปอยู่
+        y.right.parent = y;//ให้ตัวนั้นชี้กลับมาที่yเพื่อกำหนดparent
+      x.left = y;//ทางซ้ายของxชี้มาที่y
+      y.parent = x;//ให้yชี้กลับไปที่xเพื่อกำหนดparent
       if(y == root)
         root = x;
+        //ถ้าyเป็นrootอยู่ก็ให้xเป็นแทน
       else
       {
         if(w != null)
+        //หมายความว่าyไม่ใช่rootและมีตัวที่ชี้มาหาyก็คือparentของyซึ่งแทนด้วยw
         {
             if(w.right == y)
                 w.right = x;
+                //ถ้าyเคยอยู่ทางขวาของwก็ให้xไปอยู่แทนโดยให้ตัวนั้นทางขวาชี้มาที่x
             else
                 w.left = x;
+                //ถ้าyเคยอยู่ทางซ้ายของwก็ให้xไปอยู่แทนโดยให้ตัวนั้นทางซ้ายชี้มาที่x
         }
         x.parent = w;
+        //ให้parentของxชี้กลับไปที่w
       }
     }
 
     public void doubleRotateFromLeft(Node y) {
         // Pls copy the code from the previous problem
-      Node x = y.left;
-      Node z = x.right;
-      Node w = y.parent;
+      Node x = y.left;//ให้ x มีค่าเท่ากับnodeทางซ้ายของy
+      Node z = x.right;//ให้ z มีค่าเท่ากับnodeทางขวาของx
+      Node w = y.parent;//ให้node w ที่สร้างขึ้นมาเก็บค่าparentของy
       
-      x.right = z.left;
+      x.right = z.left;//ให้ทางขวาของxชี้ไปที่nodeทางซ้ายของz
         if(x.right != null)
-          x.right.parent = x;
-        z.left = x;
-        z.parent = x;
+        //ถ้า x ทางขวามีตัวที่ชี้ไปอยู่
+          x.right.parent = x;//ก็ให้ตัวที่xชี้ไป ชี้กลับมาที่x
+        z.left = x;//ให้ทางซ้ายของzชี้ไปที่x
+       
           if(y != null)
+          //ถ้า y ที่รับมาไม่ใช่null
           {
               if(y.right == x)
                   y.right = z;
+                  //ถ้าทางขวาของyเป็นxให้เปลี่ยนเป็นz
               else
                   y.left = z;
+                  //ถ้าทางซ้ายของyเป็นxให้เปลี่ยนเป็นz
           }
-          z.parent = y;
+          z.parent = y;//ให้parentของzชี้กลับไปที่y
 
-      y.left = z.right;
+      y.left = z.right;//ให้ทางซ้ายของyชี้ไปที่ทางขวาของz
       if(y.left != null)
-        y.left.parent = y;
-      z.right = y;
-      y.parent = z;
+        {y.left.parent = y;//ถ้าy.leftก็คือz.rightไม่ใช่nullก็ให้parentชี้กลับมาที่y}
+      z.right = y;//ให้ทางขวาของzชี้ไปที่y ทีนี้zก็จะขึ้นไปอยู่บนสุดแล้ว
+      y.parent = z;//ให้parentของyชี้กลับไปที่z
       if(y == root)
         root = z;
+        //ถ้าyเป็นrootก็ให้zเป็นแทน
       else
       {
         if(w != null)
         {
+          //หมายความว่าyไม่ใช่rootและมีตัวที่ชี้มาหาyก็คือparentของyซึ่งแทนด้วยw
             if(w.left == y)
                 w.left = z;
+                //ถ้าyเคยอยู่ทางซ้ายของwก็ให้zไปอยู่แทน เลยให้ทางซ้ายของwชี้ไปที่z
             else
                 w.right = z;
+                //ถ้าyเคยอยู่ทางขวาของwก็ให้zไปอยู่แทน เลยให้ทางขวาของwชี้ไปที่z
         }
         z.parent = w;
-      }
+        //ตอนนี้zอยู่บนสุดก็ให้parentชี้กลับไปที่w
+      }    
     }
 
     public void doubleRotateFromRight(Node y) {
         // Pls copy the code from the previous problem
-      Node x = y.right;
-      Node z = x.left;
-      Node w = y.parent;
+      Node x = y.right;//ให้ x มีค่าเท่ากับnodeทางซ้ายของy
+      Node z = x.left;//ให้ z มีค่าเท่ากับnodeทางขวาของx
+      Node w = y.parent;//ให้node w ที่สร้างขึ้นมาเก็บค่าparentของy
       
-      x.left = z.right;
-        if(x.left != null)
-          x.left.parent = x;
-        z.right = x;
-        z.parent = x;
-          if(y != null)
+      x.left = z.right;//ให้ทางซ้ายของxชี้ไปที่nodeทางขวาของz
+        if(x.left != null)//ถ้า x ทางซ้ายมีตัวที่ชี้ไปอยู่
+          x.left.parent = x;//ก็ให้ตัวที่xชี้ไป ให้parentชี้กลับมาที่x
+        z.right = x;//ให้ทางขวาของzชี้ไปที่x
+        
+          if(y != null)//ถ้า y ที่รับมาไม่ใช่null
           {
               if(y.left == x)
-                  y.left = z;
+                  y.left = z;//ถ้าทางซ้ายของyเป็นxให้เปลี่ยนเป็นz
               else
-                  y.right = z;
+                  y.right = z;//ถ้าทางขวาของyเป็นxให้เปลี่ยนเป็นz
           }
-          z.parent = y;
+          z.parent = y;//ให้parentของzชี้กลับไปที่y
 
-      y.right = z.left;
+      y.right = z.left;//ให้ทางขวาของyชี้ไปที่ทางซ้ายของz
       if(y.right != null)
-        y.right.parent = y;
-      z.left = y;
-      y.parent = z;
+        y.right.parent = y;//ถ้าy.rightก็คือz.leftไม่ใช่nullก็ให้parentชี้กลับมาที่y
+      z.left = y;//แล้วก็ให้ทางซ้ายของzชี้มาที่y
+      y.parent = z;//ให้parentของyชี้กลับไปที่z
       if(y == root)
         root = z;
+        //ถ้าyเป็นrootก็ให้zเป็นแทน
       else
       {
-        if(w != null)
+        if(w != null)//หมายความว่าyไม่ใช่rootและมีตัวที่ชี้มาหาyก็คือparentของyซึ่งแทนด้วยw
         {
             if(w.right == y)
-                w.right = z;
+                w.right = z;//ถ้าyเคยอยู่ทางขวาของwก็ให้zไปอยู่แทน เลยให้ทางขวาของwชี้ไปที่z
             else
-                w.left = z;
+                w.left = z;//ถ้าyเคยอยู่ทางซ้ายของwก็ให้zไปอยู่แทน เลยให้ทางซ้ายของwชี้ไปที่z
         }
-        z.parent = w;
+        z.parent = w;//ให้parentของzชี้กลับไปที่w
       }
     }
 
@@ -135,18 +157,27 @@ public class AVLTree extends BTreePrinter{
             if (balanceFactor > 1){                      // Use balanceFactor to check if left heavy?
                 if (height(node.left.left) >= height(node.left.right)){                  // Use the grandchild to check if Outer or Inner?
                     System.out.println("Perform SingleRotationFromLeft(Node " + node.key +")");   // Fix ??? and call a function
+                    //balanceFactor > 1 แปลว่าต้นไม้หนักซ้าย และเป็นการหนักที่outer
+
                     tree.singleRotateFromLeft(node);
+                    //จึงต้องใช้singleRotateFromLeftเพื่อปรับสมดุล
                 }else{
                     System.out.println("Perform DoubleRotationFromLeft(Node " + node.key +")");   // Fix ??? and call a function
+                    //balanceFactor > 1 แปลว่าต้นไม้หนักซ้ายและเป็นการหนักที่inner
                     tree.doubleRotateFromLeft(node);
+                    //จึงต้องใช้doubleRotateFromLeftเพื่อปรับสมดุล
                 }
             }else{
                 if (height(node.right.right) >= height(node.right.left)){                  // Use the grandchild to check if Outer or Inner?
                     System.out.println("Perform SingleRotationFromRight(Node " + node.key +")");   // Fix this and call a function
+                    //หมายความว่าbalanceFactor <-1แปลว่าต้นไม้หนักขวาและเป็นการหนักที่outer
                     tree.singleRotateFromRight(node);
+                    //จึงต้องใช้singleRotateFromRightเพื่อปรับสมดุล
                 }else{
                     System.out.println("Perform DoubleRotationFromRight(Node " + node.key +")");   // Fix this and call a function
+                    //หมายความว่าbalanceFactor <-1แปลว่าต้นไม้หนักขวาและเป็นการหนักที่inner
                     tree.doubleRotateFromRight(node);
+                    //จึงต้องใช้doubleRotateFromRightเพื่อปรับสมดุล
                 }
             }
         }
