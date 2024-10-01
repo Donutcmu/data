@@ -1,0 +1,104 @@
+public class BSTree extends BTreePrinter{
+    Node root;
+      
+    public void doubleRotateFromLeft(Node y) {
+        // Do something
+      Node x = y.left;
+      Node z = x.right;
+      Node w = y.parent;
+      
+      x.right = z.left;
+        if(x.right != null)
+          x.right.parent = x;
+        z.left = x;
+        z.parent = x;
+          if(y != null)
+          {
+              if(y.right == x)
+                  y.right = z;
+              else
+                  y.left = z;
+          }
+          z.parent = y;
+
+      y.left = z.right;
+      if(y.left != null)
+        y.left.parent = y;
+      z.right = y;
+      y.parent = z;
+      if(y == root)
+        root = z;
+      else
+      {
+        if(w != null)
+        {
+            if(w.left == y)
+                w.left = z;
+            else
+                w.right = z;
+        }
+        z.parent = w;
+      }    
+    }
+
+    public void doubleRotateFromRight(Node y) {
+        // Do something
+      Node x = y.right;
+      Node z = x.left;
+      Node w = y.parent;
+      
+      x.left = z.right;
+        if(x.left != null)
+          x.left.parent = x;
+        z.right = x;
+        z.parent = x;
+          if(y != null)
+          {
+              if(y.left == x)
+                  y.left = z;
+              else
+                  y.right = z;
+          }
+          z.parent = y;
+
+      y.right = z.left;
+      if(y.right != null)
+        y.right.parent = y;
+      z.left = y;
+      y.parent = z;
+      if(y == root)
+        root = z;
+      else
+      {
+        if(w != null)
+        {
+            if(w.right == y)
+                w.right = z;
+            else
+                w.left = z;
+        }
+        z.parent = w;
+      }  
+
+    }
+    
+    public void insertKey(int key) {
+        if (root == null) {
+            root = new Node(key);
+        } else {
+            Main.insertKey(root, key);
+        }
+    }
+    
+    public void printTree() {
+        if (root == null) {
+            System.out.println("Empty tree!!!");
+        } else {
+            super.printTree(root);
+        }
+    }
+
+    public Node findKey(int search_key) {
+        return Main.findKey(root, search_key);
+    }
+}
