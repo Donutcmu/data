@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class BTreePrinter {
     protected void printTree(Node node) {

@@ -1,4 +1,4 @@
-public class BTreePrinter {
+public class BTreePrinter  {
     private PrintStream outStream = System.out;
 
     private int hspace = 2;
