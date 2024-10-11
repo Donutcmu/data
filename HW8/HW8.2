@@ -12,11 +12,18 @@ public class Heap {
       // ... the concept of "Complete binary tree based on the heapay implementation"
       // ... The 0 index will not be used, The index starts from 1 (remember?)
       this.heap = new Node[capacity + 1];
+      //เราต้องให้capacity+1เพราะว่า เราจะไม่ใช่array ช่องแรก
       this.size = 0;
+      //สร้างsizeมาบอกจำนวนข้อมูลที่มีในarray
       this.capacity = capacity;
+      //กำหนดความจุ
       this.isMinHeap = isMinHeap;
+      //รับค่าเข้ามาว่าเป็นMinHeapหรือMaxHeap
       this.name = name;
+      //กำหนดชื่อ
       this.timer = 0;
+      //เก็บเวลา
+
      
   }
 
@@ -24,10 +31,12 @@ public class Heap {
     if(size > 0)
     {
        return this.heap[1]; 
+       //ถ้าในarray มีข้อมูลอยู่ ให้return ตัวแรกในarray ซึ่งจะอยู๋ในตำแหน่งที่ 1
     }
     else
     {
         return null;
+        //ถ้าในarray ไม่มีข้อมูลอยู่ return null
     }
      // FIX THIS
   }
@@ -44,20 +53,24 @@ public class Heap {
       //      * Swap the current node if the priority is higher than the parent
       //      * Repeat the process until reaching the root or there is no swap (Pls use while loop)
       // 3. Increase the heap size
-      size++;
+      size++;//เนื่องจากเมื่อเริ่มต้นสร้างarray sizeจะชี้อยู่ที่index 0
       this.heap[size] = node;
+      //ใส่nodeที่รับมาเข้าไปในarray
       
       int currentSize = size;
+      //สร้างตัวแปรมาใข้ในการทำลูป
       while(currentSize > 1)
       {
           if(heap[currentSize].compare(heap[currentSize/2], isMinHeap))
           {
               swap(currentSize,currentSize/2);
               currentSize = currentSize / 2;
+              //ถ้าค่าที่รับมาใหม่มีค่าน้อยกว่าparentซึ่งตำแหน่งจะเท่ากับsizeให้ทำการสลับ
           }
           else
           {
               break;
+              //เมื่อไปถึงarray ตำแหน่งที่น้อยที่สุดที่ไปได้แล้วให้หยุด
           }
       }
     
@@ -76,51 +89,74 @@ public class Heap {
     if (size == 0) 
     {
         return null;
+        //ถ้าในarrayไม่มี ใครอยู่ให้ return null
     }
 
     Node root = this.heap[1];
+    //สร้างnode root ชึ้นมาเพื่อเก็บ array ตำแหน่งที่ 1 ซึงก็คือ root node
     this.heap[1] = this.heap[size];
+    //เอาตัวที่อยู่ท้ายสุดมาแทนroot node;
     size--;
-    
+    //ลดsize ให้ไปชี้arrayก่อนหน้า
+
     int currentSize = 1;
+    //สร้างตัวแปรมาเพื่อใช้ในการวนลูป
     while (currentSize * 2 <= size) 
-    {
+    {   
+
         Node current = this.heap[currentSize];
+        //สร้าง  Node current มาเก็บnode ที่sizeชี้อยู่
         Node left = this.heap[currentSize * 2];
+        //เก็บค่าnodeลูกทางซ้าย
         Node right = this.heap[currentSize * 2 + 1];
+        //เก็บค่าnodeลูกทางขวา
 
         if(right == null) 
         {
+            //ถ้าทางขวาไม่มีลูกอยู่
             if (left.compare(current, isMinHeap)) 
             {
+                //จะเปรียบเทียบกับลูกทางซ้ายแทน
                 swap(currentSize, currentSize * 2);
+                //ถ้าลูกทางซ้ายมีค่าน้อยกว่าให้สลับลงไป
                 currentSize = currentSize * 2;
+                //เปลี่ยนตำแหน่งที่ใช้ชี้
             } 
             else 
             {
                 break; 
+                //ถ้าทางซ้ายก็ไม่มีแปลว่าอยู่ถูกที่แล้ว
+                //ไม่มีที่ให้สลับลงไปแล้ว
             }
         }
         else 
         {
             Node lesserNode;
             int lesserSize;
+            //สร้างnodeและตัวแปร มาเก็บnodeที่มีค่าน้อยกว่า
 
             if (left.compare(right, isMinHeap)) 
             {
+                //เปรียบเทียบลูกทางซ้ายกับทางขวา
                 lesserNode = left;
+                //ถ้าทางซ้ายน้อยกว่าทางขวาให้ไปทางซ้าย
                 lesserSize = currentSize * 2;
+                //ลงไปทางลูกอีก1ชั้น
             } 
             else 
             {
                 lesserNode = right;
+                //ทางขวาน้อยกว่าให้ไปทางขวา
                 lesserSize = currentSize * 2 + 1;
+                //ลงไปทางลูกอีก1ชั้น
             }
 
             if (lesserNode.compare(current, isMinHeap)) 
             {
                 swap(currentSize, lesserSize);
+                //เปรียบเทียบ node current กับ node lesserSize
                 currentSize = lesserSize;
+                //ถ้าcurrent size < lesserSize ให้สลับ
             } 
             else 
             {
