@@ -17,7 +17,10 @@ public class Graph {
         this.size = 0;
         this.cc = 0;
         vertexList = new Vertex[cap];
+        //สร้างarrayมาเก็บVertexคือvertexList
         adjacencyList = new LinkedList[cap];
+        //สร้างarrayมาเก็บLinkedListคือadjacencyList
+        //constrctor function 
     }
     
     public void addVertex(int key){
@@ -26,24 +29,27 @@ public class Graph {
             return;
         }
         
-        Vertex vertex = new Vertex(key);
-        vertexList[size] = vertex;
-        adjacencyList[size] = new LinkedList<>();
+        Vertex vertex = new Vertex(key);//สร้างvertexขึ้นมาใหม่
+        vertexList[size] = vertex;//เอาใส่เข้าไปในarray
+        adjacencyList[size] = new LinkedList<>();// สร้าง LinkedList มาสำหรับเก็บจุดที่เชื่อมกัน
         size++;
     }
     
     // Adds a two-way edge between vertices u and v
     public void addEdge(int u, int v){
         if (vertexList[u] == null){
+            //ดูว่ามีจุด u รึป่าว ถ้าไม่มีให้ print "Source node does not exist"
             System.out.println("Source node does not exist");
             return;
         }
         if (vertexList[v] == null){
+            //ดูว่ามีจุด v รึป่าว ถ้าไม่มีให้"Destination node does not exist"
             System.out.println("Destination node does not exist");
             return;
         }
         
         if (!isConnected(u, v)){
+            //ถ้ายังไม่เคยเชื่อมกันให้ ทำการเชื่อม
             adjacencyList[u].add(v);
             adjacencyList[v].add(u);
         } else {
@@ -54,6 +60,7 @@ public class Graph {
     // Checks if Vertex(u) and Vertex(v) have an edge between them
     public boolean isConnected(int u, int v){
         return adjacencyList[u].contains(v);
+        //return ว่าuเชื่อมกับvรึป่าว
     }
 
     public void showAdjacentVertices(int u) {
@@ -71,26 +78,37 @@ public class Graph {
     
     public void BFS(Vertex s){
         for (Vertex v : vertexList) {
+            //สร้างจุด v มาวนทุกจุด
             if (v != null) {
                 v.dist = Integer.MAX_VALUE;
+                //เปลี่ยนdistanceให้เป็นinfinity
                 v.prev = null;
             }
         }
         s.dist = 0;
+        //setระยะทางของจุดที่รับมาเป็น0
         
         Queue<Vertex> queue = new LinkedList<>();
-        queue.add(s);
+        // สร้าง queue  มาเก็บvertex
+        queue.add(s);// เพิ่มจุดยอด
         
         while (!queue.isEmpty()) {
             Vertex current = queue.poll();
+            //เก็บจุดแรกในqueueไว้ในcurrent
             int u = current.intKey;
+            //เก็บkeyของจุดปัจจุบัน
             
             for (int vIndex : adjacencyList[u]) {
+                //วนลูปดูการเชื่อมต่อ
                 Vertex v = vertexList[vIndex];
                 if (v.dist == Integer.MAX_VALUE) {
+                    //ถ้าจุดนี้ยังไม่เคยผ่าน
                     queue.add(v);
+                    //ให้เพิ่มจุดนี้
                     v.dist = current.dist + 1;
+                    //เพิ่มระยะทาง
                     v.prev = current;
+                    
                 }
             }
         }
@@ -98,33 +116,37 @@ public class Graph {
 
     public Stack<Vertex> getShortestPathList(Vertex S, Vertex U){
         if (U.dist == Integer.MAX_VALUE) {
+            //ดูว่าเส้นทางที่ไปหาจุด U รึป่าว
             System.out.printf("There is no path from %d to %d%n", S.intKey, U.intKey);
             return new Stack<>();
         }
         
-        Stack<Vertex> path = new Stack<>();
+        Stack<Vertex> path = new Stack<>();//สร้างstackมาเก็บเส้นทาง
         for (Vertex at = U; at != null; at = at.prev) {
-            path.push(at);
+            // วนลูปจาก U ไปยัง S โดยใช้ previous pointers
+            path.push(at);//เพิ่มจุดไปในstack
         }
         
         return path;
+        //ส่งpathกลับไป
     }
   
     public void printShortestPath(int s_index, int u_index) {
     Vertex S = vertexList[s_index];
     Vertex U = vertexList[u_index];
-    
+    //set จุดให้ตรงกับค่าที่รับมา
     BFS(S);
+    //ใช้BFSเพื่อให้ได้ระยะทาง
     
     Stack<Vertex> path = getShortestPathList(S, U);
+    // หาเส้นทางที่สั้นที่สุด
 
-   /* if (path.isEmpty()) {
-        System.out.printf("There is no path from %d to %d%n", S.intKey, U.intKey);
-        return;
-    }*/
+   
     
     while (!path.isEmpty()) {
+        //ถ้ายังมีเส้นทางในstackอยู่
         System.out.print(path.pop().strKey);
+        //print keyออกมา
         if (!path.isEmpty()) {
             System.out.print(" -> ");
         }
