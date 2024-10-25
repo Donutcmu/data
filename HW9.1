@@ -15,23 +15,28 @@ public class JavaCollectionTest {
             x = i;
             // Add keys to the LinkedList object (list)
             list.add(x);
+            //เพิ่มkeyลงไปในlist
             
         }
             
         // Check if 5 is contained in the list
         boolean check = list.contains(5); // Fix this
+        //ใช้containsเพื่อเช็คว่าในlistมีเลข 5 รึป่าว
         System.out.println("5 is in the list = "+check);
         
         // Check if 6 is contained in the list
         check = list.contains(6); // Fix this
+        //ใช้containsเพื่อเช็คว่าในlistมีเลข 6 รึป่าว
         System.out.println("6 is in the list = "+check);
         
         // Show all elements in the list
         // Fix all of these
         int e = list.size();
+        //ให้ e เท่ากับขนาดของlist
         for(int i = 0; i< e;i++)
         {
             System.out.print(list.get(i) + ", ");
+            //printค่าในlistให้ครบทุกตัว
         }
         
         System.out.println();
@@ -41,36 +46,53 @@ public class JavaCollectionTest {
         // Create a queue object that can contain String's
         // Name the varible to q
         Queue<String> q = new LinkedList<>();
+        //สร้าง Queueชื่อว่า q สำหรับเก็บstringขึ้นมา
         
         String[] names = {"Abraham","Andrew","Benjamin","Claudia","Gabriel"};
         for (int i=0; i<names.length; i++){
             // Add names[i] to the queue object (q)
             q.add(names[i]);
+            //ใส่ชื่อลงไปในqueueที่สร้างมา
             
         }
             
         System.out.println("Top = "+ q.peek());        // Fix this
+        //peek ใช้สำหรับ return ค่าตัวแรกสุดออกมา แต่ไม่ได้ลบออก
         System.out.println("1st Pop = " + q.poll());   // Fix this
+        //poll ใช้สำหรับ return ค่าตัวแรกสุดออกมา และลบตัวแรกออก
+        //ตัวที่อยู่ถัดไปจึงขึ้นมาอยู่ลำดับแรกแทน ซึ่งค่าที่อยู่ลำดับแรกในปัจจุบันคือ Abraham
         System.out.println("2nd Pop = " + q.poll());   // Fix this
+        //poll ใช้สำหรับ return ค่าตัวแรกสุดออกมา และลบตัวแรกออก
+        //ตัวที่อยู่ถัดไปจึงขึ้นมาอยู่ลำดับแรกแทน ซึ่งค่าที่อยู่ลำดับแรกในปัจจุบันคือ Andrew
         System.out.println("3rd Pop = " + q.poll());   // Fix this
+        //poll ใช้สำหรับ return ค่าตัวแรกสุดออกมา และลบตัวแรกออก
+        //ตัวที่อยู่ถัดไปจึงขึ้นมาอยู่ลำดับแรกแทน ซึ่งค่าที่อยู่ลำดับแรกในปัจจุบันคือ Benjamin
     }
         
     public static void stackTest(){
         // Create a stack of object that can contain String's
         // Name the varible to s
         Stack<String> s = new Stack<>();
-        
+        //สร้างstackชื่อ s ขึ้นมาสำหรับเก็บstring
         String[] names = {"Abraham","Andrew","Benjamin","Claudia","Gabriel"};
         for (int i=0; i<names.length; i++){
             // Push names[i] into the stack object (s)
             s.push(names[i]);
+            //ใส่ชื่อเข้าไปในstack
             
         }
             
         System.out.println("Top = "+ s.peek());        // Fix this
+        //peek() ใช้สำหรับreturn ค่าบนสุดของstackออกมา แต่ไม่ได้ลบออก
         System.out.println("1st Pop = "+ s.pop());    // Fix this
+        //poll() ใช้สำหรับreturn ค่าบนสุดของstackออกมา และลบตัวนั้นออก 
+        //ซึ่งค่าที่อยู่บนสุดในปัจจุบันคือ Gabriel
         System.out.println("2nd Pop = "+ s.pop());    // Fix this
+        //poll() ใช้สำหรับreturn ค่าบนสุดของstackออกมา และลบตัวนั้นออก 
+        //ซึ่งค่าที่อยู่บนสุดในปัจจุบันคือ Claudia
         System.out.println("3rd Pop = "+ s.pop());    // Fix this
+        //poll() ใช้สำหรับreturn ค่าบนสุดของstackออกมา และลบตัวนั้นออก 
+        //ซึ่งค่าที่อยู่บนสุดในปัจจุบันคือ Benjamin
     }
         
         
@@ -100,7 +122,7 @@ public class JavaCollectionTest {
                String s = arr[i].get(j);
                System.out.print(s + ", ");
             }
-            
+            //forลูปนี้จะวนไปที่ทุกๆตัวๆในarray ซึ่งแต่ละlink listจะมีชื่อเก็บอยู่
             System.out.println("");
         }
             
@@ -110,6 +132,7 @@ public class JavaCollectionTest {
             // Do something
             
             System.out.println("Benjamin is contained in arr["+i+"]? = " + arr[i].contains("Benjamin")); // Fix this
+            //เช็คlinklistในแต่ละindex ของarrayว่ามีชื่อBenjaminอยู่รึป่าว
         }
     }
 }
