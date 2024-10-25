@@ -39,6 +39,7 @@ public class HashTable {
     
     public int getIndex(String s) { //func รับค่า Index ของ String
         int hash = polyHash(s, p, x) % capacity; //รับค่า Hash จาก String ด้วย func polyhash
+        int firsthash = hash; //บันทึกค่าhash เริ่มต้นไว้
         for(int i = 0 ; i < capacity;i++)
         {
             if (arr[hash] == null) { //หาก arr ในช่องhash ว่างให้ return ค่า hash ออก
@@ -47,7 +48,7 @@ public class HashTable {
             if (arr[hash].equals(s)) { //หาก arr ในช่องhash มีค่าเท่ากับ String ก็ให้ return ค่า hash ออกเหมือนกัน
                 return hash;
             }
-            hash = (originalHash + (i+i*i)/2) % capacity; //ใช้วิธี Quadratic probing ในการแทนค่า hash ไว้ใช้ใน arr ช่องถัดไป
+            hash = (firsthash + (i+i*i)/2) % capacity; //ใช้วิธี Quadratic probing ในการแทนค่า hash ไว้ใช้ใน arr ช่องถัดไป
         }
         return -1;
     }
@@ -57,7 +58,7 @@ public class HashTable {
     // If you want to get the ASCII code of char c, use (int)c
     public static int polyHash(String s, int p, int x){ //func สำหรับ hash ค่าของ String 
         int hash = 0; //กำหนดตัวแปรเริ่มต้น
-        for (int i = s.length() - 1; i >= 0; i--) ทำการ hash ข้อมูลทีละตัวของ String
+        for (int i = s.length() - 1; i >= 0; i--) //ทำการ hash ข้อมูลทีละตัวของ String
         {
             hash = (hash * x + (int)s.charAt(i)) % p; //ทำการ hash ค่าของ string ด้วย ASCII code ของ String ตัวนั้นๆ
         }
