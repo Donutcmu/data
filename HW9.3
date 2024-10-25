@@ -1,0 +1,188 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+@SuppressWarnings("unchecked")
+public class Graph {
+    
+    Vertex[] vertexList; // List of vertices
+    LinkedList<Integer>[] adjacencyList; // Graph implemented with adjacency lists
+    
+    int cap;
+    int size;
+    int cc; // Connected components count
+
+    public Graph(int cap){
+        this.cap = cap;
+        this.size = 0;
+        this.cc = 0;
+        vertexList = new Vertex[cap];
+        adjacencyList = new LinkedList[cap];
+    }
+    
+    public void addVertex(int key){
+        if (size == cap){
+            System.out.println("Vertex list is full. You need to recreate the Graph");
+            return;
+        }
+        
+        Vertex vertex = new Vertex(key);
+        vertexList[size] = vertex;
+        adjacencyList[size] = new LinkedList<>();
+        size++;
+    }
+    
+    // Adds a two-way edge between vertices u and v
+    public void addEdge(int u, int v){
+        if (vertexList[u] == null){
+            System.out.println("Source node does not exist");
+            return;
+        }
+        if (vertexList[v] == null){
+            System.out.println("Destination node does not exist");
+            return;
+        }
+        
+        if (!isConnected(u, v)){
+            adjacencyList[u].add(v);
+            adjacencyList[v].add(u);
+        } else {
+            System.out.println("There is already an edge connecting vertex " + u + " and vertex " + v);
+        }
+    }
+    
+    // Checks if Vertex(u) and Vertex(v) have an edge between them
+    public boolean isConnected(int u, int v){
+        return adjacencyList[u].contains(v);
+    }
+
+    public void showAdjacentVertices(int u) {
+    Vertex v = vertexList[u];
+    System.out.print("Vertex " + v.strKey + " connected to the following vertices: ");
+    
+    LinkedList<Integer> list = adjacencyList[u];
+    for (int i = 0; i < list.size(); i++) {
+        System.out.print(vertexList[list.get(i)].strKey);
+        System.out.print(", ");
+        
+    }
+    System.out.println();
+    }
+    
+    public void BFS(Vertex s){
+        for (Vertex v : vertexList) {
+            if (v != null) {
+                v.dist = Integer.MAX_VALUE;
+                v.prev = null;
+            }
+        }
+        s.dist = 0;
+        
+        Queue<Vertex> queue = new LinkedList<>();
+        queue.add(s);
+        
+        while (!queue.isEmpty()) {
+            Vertex current = queue.poll();
+            int u = current.intKey;
+            
+            for (int vIndex : adjacencyList[u]) {
+                Vertex v = vertexList[vIndex];
+                if (v.dist == Integer.MAX_VALUE) {
+                    queue.add(v);
+                    v.dist = current.dist + 1;
+                    v.prev = current;
+                }
+            }
+        }
+    }
+
+    public Stack<Vertex> getShortestPathList(Vertex S, Vertex U){
+        if (U.dist == Integer.MAX_VALUE) {
+            System.out.printf("There is no path from %d to %d%n", S.intKey, U.intKey);
+            return new Stack<>();
+        }
+        
+        Stack<Vertex> path = new Stack<>();
+        for (Vertex at = U; at != null; at = at.prev) {
+            path.push(at);
+        }
+        
+        return path;
+    }
+  
+    public void printShortestPath(int s_index, int u_index) {
+    Vertex S = vertexList[s_index];
+    Vertex U = vertexList[u_index];
+    
+    BFS(S);
+    
+    Stack<Vertex> path = getShortestPathList(S, U);
+
+   /* if (path.isEmpty()) {
+        System.out.printf("There is no path from %d to %d%n", S.intKey, U.intKey);
+        return;
+    }*/
+    
+    while (!path.isEmpty()) {
+        System.out.print(path.pop().strKey);
+        if (!path.isEmpty()) {
+            System.out.print(" -> ");
+        }
+    }
+    System.out.println();
+}
+
+    
+    public static Graph constructGraph1(){
+        Graph graph = new Graph(32); 
+        for (int i = 0; i < 16; i++)
+            graph.addVertex(i);
+        
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 5);
+        graph.addEdge(0, 4);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 5);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 6);
+        graph.addEdge(4, 8);
+        graph.addEdge(5, 9);
+        graph.addEdge(6, 7);
+        graph.addEdge(6, 10);
+        graph.addEdge(6, 9);
+        graph.addEdge(7, 14);
+        graph.addEdge(8, 9);
+        graph.addEdge(8, 13);
+        graph.addEdge(8, 12);
+        graph.addEdge(10, 14);
+        graph.addEdge(11, 15);
+        graph.addEdge(13, 14);
+        graph.addEdge(14, 15);
+        
+        return graph;
+    }
+
+    public static Graph constructGraph2(){
+        Graph graph = new Graph(32); 
+        for (int i = 0; i < 16; i++)
+            graph.addVertex(i);
+        
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 5);
+        graph.addEdge(0, 4);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 5);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 6);
+        graph.addEdge(5, 9);
+        graph.addEdge(6, 9);
+        graph.addEdge(7, 14);
+        graph.addEdge(8, 13);
+        graph.addEdge(8, 12);
+        graph.addEdge(10, 14);
+        graph.addEdge(11, 15);
+        graph.addEdge(14, 15);
+        
+        return graph;
+    }
+}
