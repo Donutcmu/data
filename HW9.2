@@ -47,7 +47,7 @@ public class HashTable {
             if (arr[hash].equals(s)) { //หาก arr ในช่องhash มีค่าเท่ากับ String ก็ให้ return ค่า hash ออกเหมือนกัน
                 return hash;
             }
-            hash = (hash + i) % capacity; //ใช้วิธี 
+            hash = (originalHash + (i+i*i)/2) % capacity; //ใช้วิธี Quadratic probing ในการแทนค่า hash ไว้ใช้ใน arr ช่องถัดไป
         }
         return -1;
     }
