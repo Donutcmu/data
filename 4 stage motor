@@ -1,0 +1,86 @@
+#include <Stepper.h>
+
+// Define the number of steps per revolution for your stepper motor
+const int stepsPerRevolution = 64;  // For 28BYJ-48, adjust if using a different motor
+
+// Pin definitions for stepper motor control
+const int motorPin1 = 8;  // IN1 on ULN2003
+const int motorPin2 = 9;  // IN2 on ULN2003
+const int motorPin3 = 10; // IN3 on ULN2003
+const int motorPin4 = 11; // IN4 on ULN2003
+
+// Push-button input pin
+const int buttonPin = 2;
+
+// Variables for tracking the button press
+int buttonState = 0;   // Current state of the button
+int lastButtonState = 0;  // Previous state of the button
+int stage = 0;         // Current stage (0, 1, 2, 3 for each 90-degree increment)
+
+// Create an instance of the Stepper class
+Stepper myStepper(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4);
+
+void setup() {
+  // Set the motor speed (RPM)
+  myStepper.setSpeed(15);  // Set speed (RPM)
+
+  // Set the button pin as INPUT
+  pinMode(buttonPin, INPUT);
+
+  // Start serial communication for debugging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Read the current state of the button
+  buttonState = digitalRead(buttonPin);
+
+  // Check if the button was pressed (when it changes from LOW to HIGH)
+  if (buttonState == HIGH && lastButtonState == LOW) {
+    // Debounce delay to avoid multiple presses
+    delay(50);
+
+    // Increment the stage (cycle through 0 to 3)
+    stage++;
+    if (stage > 3) {
+      stage = 0;  // Reset to stage 0 after reaching 3
+    }
+
+    // Rotate the motor by 90 degrees (16 steps per 90 degrees)
+    rotateToStage(stage);
+
+    // Print the current stage for debugging
+    Serial.print("Stage: ");
+    Serial.println(stage);
+  }
+
+  // Save the current button state for the next loop
+  lastButtonState = buttonState;
+}
+
+// Function to rotate the stepper motor to the specified stage
+void rotateToStage(int stage) {
+  int stepsToMove = 0;
+
+  // Determine the number of steps needed based on the stage
+  switch (stage) {
+    case 0:
+      stepsToMove = 0;  // No rotation needed for stage 0
+      break;
+    case 1:
+      stepsToMove = 16;  // Rotate 90 degrees (16 steps)
+      break;
+    case 2:
+      stepsToMove = 32;  // Rotate 180 degrees (32 steps)
+      break;
+    case 3:
+      stepsToMove = 48;  // Rotate 270 degrees (48 steps)
+      break;
+  }
+
+  // Move the motor by the calculated number of steps
+  myStepper.step(stepsToMove);
+
+  // Optionally, if you need to rotate counterclockwise, use a negative number for step() like this:
+  // myStepper.step(-stepsToMove);
+}
