@@ -1,0 +1,45 @@
+import java.util.*;
+
+public class Lab08 {
+    public static void main(String[] args) {
+
+
+        HashSet<String> hashSet1 = new HashSet<>(Arrays.asList("ant", "bat", "cat"));
+        HashSet<String> hashSet2 = new HashSet<>(Arrays.asList("bat", "ant", "cat","rat"));
+
+
+        MySet.Myset<String> mySet1 = new MySet.Myset<>();
+        mySet1.add("ant");
+        mySet1.add("bat");
+        mySet1.add("cat");
+
+        MySet.Myset<String> mySet2 = new MySet.Myset<>();
+        mySet2.add("bat");
+        mySet2.add("ant");
+        mySet2.add("cat");
+        mySet2.add("rat");
+
+        MySet.Myset<String> mySet3 = new MySet.Myset<>();
+        mySet3.add("ant");
+        mySet3.add("bat");
+
+
+        System.out.println(mySet1.equals(hashSet1));
+        System.out.println(mySet2.equals(hashSet2));
+
+
+        List<Set<String>> sets = new ArrayList<>();
+        sets.add(mySet1);
+        sets.add(mySet2);
+        sets.add(mySet3);
+
+
+        sets.sort(MySet.setComparator());
+        for (Set<String> set : sets) {
+            System.out.println(set);
+        }
+
+        System.out.println(mySet1.hashCode());
+        System.out.println(hashSet1.hashCode());
+    }
+}
