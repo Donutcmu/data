@@ -1,0 +1,61 @@
+#include <Wire.h>
+#include <LCD_I2C.h>
+#include <RTClib.h>
+
+// สร้างอ็อบเจ็กต์สำหรับ RTC และ LCD
+RTC_DS1307 rtc;
+LCD_I2C lcd(0x27, 16, 2); // กำหนดที่อยู่ I2C (0x27) และขนาดจอ LCD (16x2)
+
+char daysOfWeek[7][12] = {
+  "Sunday", "Monday", "Tuesday", "Wednesday",
+  "Thursday", "Friday", "Saturday"
+};
+
+void setup() {
+  // เริ่มต้น Serial สำหรับ debug
+  Serial.begin(9600);
+
+  // เริ่มต้นใช้งานจอ LCD
+  lcd.begin();
+  lcd.backlight();
+  lcd.print("Initializing...");
+  delay(2000);
+  lcd.clear();
+
+  // ตรวจสอบการเชื่อมต่อ RTC
+  if (!rtc.begin()) {
+    lcd.print("RTC not found");
+    Serial.println("RTC module is NOT found");
+    while (1); // หยุดโปรแกรมหากไม่พบ RTC
+  }
+
+  // ตั้งค่าเวลาเริ่มต้น (ตามเวลาที่คอมไพล์โค้ด)
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+}
+
+void loop() {
+  // อ่านเวลาปัจจุบันจาก RTC
+  DateTime now = rtc.now();
+
+  // แสดงวันที่ (แถวที่ 1)
+  lcd.setCursor(0, 0); // เคอร์เซอร์แถวที่ 1 คอลัมน์ที่ 0
+  lcd.print(now.year());
+  lcd.print('/');
+  lcd.print(now.month());
+  lcd.print('/');
+  lcd.print(now.day());
+
+  // แสดงวันและเวลา (แถวที่ 2)
+  lcd.setCursor(0, 1); // เคอร์เซอร์แถวที่ 2 คอลัมน์ที่ 0
+  lcd.print(daysOfWeek[now.dayOfTheWeek()]);
+  lcd.print(' ');
+  lcd.print(now.hour());
+  lcd.print(':');
+  if (now.minute() < 10) lcd.print('0'); // เพิ่ม 0 นำหน้าหากน้อยกว่า 10
+  lcd.print(now.minute());
+  lcd.print(':');
+  if (now.second() < 10) lcd.print('0'); // เพิ่ม 0 นำหน้าหากน้อยกว่า 10
+  lcd.print(now.second());
+
+  delay(1000); // อัปเดตข้อมูลทุก 1 วินาที
+}
