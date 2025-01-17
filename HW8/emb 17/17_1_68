@@ -1,0 +1,40 @@
+#include <Adafruit_PCF8574.h>
+/* ตัวอย่างโค้ด: กดปุ่ม LED ติด ปล่อยปุ่ม LED ดับ
+ * หมายเหตุ: LED เชื่อมต่อแบบ SINK กระแส (CATHODE เชื่อมกับ PCF8574)
+ * และปุ่มกดต้องต่อระหว่างพิน GPIO ของ PCF8574 และกราวด์
+ */
+
+#define PCF8574_Address 0x20
+
+Adafruit_PCF8574 pcf;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Adafruit PCF8574 Button LED test");
+
+  if (!pcf.begin(PCF8574_Address, &Wire)) {
+    Serial.println("Couldn't find PCF8574");
+    while (1); // หยุดการทำงานหากหาโมดูลไม่เจอ
+  }
+
+  // กำหนดพิน 7 เป็น OUTPUT (ต่อกับ LED)
+  pcf.pinMode(7, OUTPUT);
+
+  // กำหนดพิน 0 เป็น INPUT_PULLUP (ต่อกับปุ่ม)
+  pcf.pinMode(0, INPUT_PULLUP);
+}
+
+void loop() {
+  // อ่านสถานะของปุ่ม
+  uint8_t buttonState = pcf.digitalRead(0);
+
+  if (buttonState == LOW) {
+    // ถ้าปุ่มถูกกด (LOW) ให้ LED ติด
+    pcf.digitalWrite(7, LOW); // เปิด LED
+  } else {
+    // ถ้าปุ่มถูกปล่อย (HIGH) ให้ LED ดับ
+    pcf.digitalWrite(7, HIGH); // ปิด LED
+  }
+
+  delay(50); // เพิ่มดีเลย์เพื่อป้องกันการสั่นของปุ่ม (debouncing)
+}
