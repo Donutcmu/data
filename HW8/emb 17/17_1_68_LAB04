@@ -1,0 +1,63 @@
+#include <Wire.h>
+#include <LCD_I2C.h>
+
+LCD_I2C lcd(0x27, 16, 2); // กำหนดที่อยู่ I2C ของ LCD
+
+// ฟังก์ชันเพื่ออ่านข้อมูลจาก DS1307 RTC
+uint8_t readRTC(uint8_t addr) {
+  Wire.beginTransmission(0x68);  // ที่อยู่ I2C ของ DS1307
+  Wire.write(addr);              // ส่งที่อยู่ข้อมูล
+  Wire.endTransmission();
+  Wire.requestFrom(0x68, 1);     // ขอข้อมูลจาก RTC
+  return Wire.read();            // อ่านข้อมูล
+}
+
+void setup() {
+  Wire.begin();    // เริ่มต้นการสื่อสาร I2C
+  lcd.begin();     // เริ่มต้นการใช้งาน LCD
+  lcd.backlight(); // เปิดไฟหลังจอ
+  lcd.clear();     // เคลียร์ข้อมูลบน LCD
+
+  // แสดงข้อความต้อนรับ
+  lcd.setCursor(0, 0);
+  lcd.print("Initializing RTC");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  // อ่านข้อมูลเวลาจาก RTC
+  uint8_t second = readRTC(0x00);  // อ่านวินาที
+  uint8_t minute = readRTC(0x01);  // อ่านนาที
+  uint8_t hour = readRTC(0x02);    // อ่านชั่วโมง
+  uint8_t day = readRTC(0x04);     // อ่านวัน
+  uint8_t month = readRTC(0x05);   // อ่านเดือน
+  uint8_t year = readRTC(0x06);    // อ่านปี
+
+  // แปลงค่า BCD (Binary Coded Decimal) เป็นค่าจริง
+  second = (second & 0x0F) + ((second >> 4) * 10);
+  minute = (minute & 0x0F) + ((minute >> 4) * 10);
+  hour = (hour & 0x0F) + ((hour >> 4) * 10);
+  day = (day & 0x0F) + ((day >> 4) * 10);
+  month = (month & 0x0F) + ((month >> 4) * 10);
+  year = (year & 0x0F) + ((year >> 4) * 10);
+
+  // แสดงผลข้อมูลบน LCD
+  lcd.setCursor(0, 0);
+  lcd.print(year);
+  lcd.print('/');
+  lcd.print(month);
+  lcd.print('/');
+  lcd.print(day);
+
+  lcd.setCursor(0, 1);
+  lcd.print(hour);
+  lcd.print(':');
+  if (minute < 10) lcd.print('0');
+  lcd.print(minute);
+  lcd.print(':');
+  if (second < 10) lcd.print('0');
+  lcd.print(second);
+
+  delay(1000);  // อัปเดตทุก 1 วินาที
+}
