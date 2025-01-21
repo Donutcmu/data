@@ -1,0 +1,303 @@
+#include <WiFi.h>
+#include <MQTT.h>
+#include <Wire.h>
+#include <LCD_I2C.h>
+
+//รายละเอียดคือกดปุ่มละมอเตอร์หมุนไป 1/4 และทำงานผ่านmqttและมีdisplayแสดงเวลา พร้อมกับส่งเวลาที่ทำงานกลับไปmqtt
+
+const char ssid[] = "JumboPlus_DormIoT";
+const char pass[] = "m11xa0xb";
+
+const char mqtt_broker[] = "test.mosquitto.org";
+const char mqtt_topic[] = "group89/command";
+const char mqtt_client_id[] = "clientId-15NXFEDq56"; // must change this string to a unique value
+int MQTT_PORT = 1883;
+
+#define buttonpin 32
+#define STEPPER_PIN_1 16
+#define STEPPER_PIN_2 17
+#define STEPPER_PIN_3 18
+#define STEPPER_PIN_4 19
+
+int step_number = 0;
+int buttonState = 0;   
+int lastButtonState = 0;  
+int stage = 0;         // Stage variable to control rotation steps
+int stopPrintPetting = 0;
+
+const int stepsPer90Degree = 530;
+
+WiFiClient net;
+MQTTClient client;
+LCD_I2C lcd(0x27, 16, 2);
+
+bool ledState = LOW;
+
+void connect() {
+  Serial.print("checking wifi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.println(".");
+    delay(1000);
+  }
+
+  Serial.print("\nconnecting...");
+  while (!client.connect(mqtt_client_id)) {  
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");
+
+  client.subscribe(mqtt_topic);
+}
+
+void messageReceived(String &topic, String &payload) {
+  Serial.println("incoming: " + topic + " - " + payload);
+
+  // Update LED state based on payload
+  if (payload == "on") {
+    ledState = HIGH;
+  } else if (payload == "off") {
+    ledState = LOW;
+  } else if (payload == "button pressed") {
+    
+
+    
+
+
+    stage++;
+    if (stage > 3) {
+      stage = 0;
+    }
+
+    // Rotate motor by the appropriate number of steps
+    rotateToStage(stage);
+
+    // Print the current stage for debugging
+    Serial.print("Stage: ");
+    
+    Serial.println(stage);
+
+  } 
+}
+uint8_t readRTC(uint8_t addr) {
+  Wire.beginTransmission(0x68);  // ที่อยู่ I2C ของ DS1307
+  Wire.write(addr);              // ส่งที่อยู่ข้อมูล
+  Wire.endTransmission();
+  Wire.requestFrom(0x68, 1);     // ขอข้อมูลจาก RTC
+  return Wire.read();            // อ่านข้อมูล
+}
+
+void setup() {
+
+  Serial.begin(9600);
+  WiFi.begin(ssid, pass);
+
+  pinMode(STEPPER_PIN_1, OUTPUT);
+  pinMode(STEPPER_PIN_2, OUTPUT);
+  pinMode(STEPPER_PIN_3, OUTPUT);
+  pinMode(STEPPER_PIN_4, OUTPUT);
+  pinMode(buttonpin, INPUT);
+
+  pinMode(buttonpin, INPUT_PULLUP);
+
+  client.begin(mqtt_broker, MQTT_PORT, net);
+  client.onMessage(messageReceived);
+
+  connect();
+
+  Wire.begin();    // เริ่มต้นการสื่อสาร I2C
+  lcd.begin();     // เริ่มต้นการใช้งาน LCD
+  lcd.backlight(); // เปิดไฟหลังจอ
+  lcd.clear();     // เคลียร์ข้อมูลบน LCD
+
+  // แสดงข้อความต้อนรับ
+  lcd.setCursor(0, 0);
+  lcd.print("Initializing RTC");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+
+
+  uint8_t second = readRTC(0x00);  // อ่านวินาที
+  uint8_t minute = readRTC(0x01);  // อ่านนาที
+  uint8_t hour = readRTC(0x02);    // อ่านชั่วโมง
+  uint8_t day = readRTC(0x04);     // อ่านวัน
+  uint8_t month = readRTC(0x05);   // อ่านเดือน
+  uint8_t year = readRTC(0x06);    // อ่านปี
+
+  // แปลงค่า BCD (Binary Coded Decimal) เป็นค่าจริง
+  second = (second & 0x0F) + ((second >> 4) * 10);
+  minute = (minute & 0x0F) + ((minute >> 4) * 10);
+  hour = (hour & 0x0F) + ((hour >> 4) * 10);
+  day = (day & 0x0F) + ((day >> 4) * 10);
+  month = (month & 0x0F) + ((month >> 4) * 10);
+  year = (year & 0x0F) + ((year >> 4) * 10);
+
+  // แสดงผลข้อมูลบน LCD
+  lcd.setCursor(0, 0);
+  lcd.print(year);
+  lcd.print('/');
+  lcd.print(month);
+  lcd.print('/');
+  lcd.print(day);
+
+  lcd.setCursor(0, 1);
+  lcd.print(hour);
+  lcd.print(':');
+  if (minute < 10) lcd.print('0');
+  lcd.print(minute);
+  lcd.print(':');
+  if (second < 10) lcd.print('0');
+  lcd.print(second);
+
+  if(second%10==0 && stopPrintPetting==0){
+    lcd.print("Petting");
+    stopPrintPetting=1;
+     char buffer[50];
+    sprintf(buffer, "Motor moved at %02d/%02d/%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
+    client.publish(mqtt_topic, buffer);
+    Serial.println(buffer);
+    stage++;
+    
+    if (stage > 3) {
+      stage = 0;
+    }
+
+    // Rotate motor by the appropriate number of steps
+    rotateToStage(stage);
+
+    // Print the current stage for debugging
+    Serial.print("Stage: ");
+    Serial.println(stage);
+    
+    }
+  if(second%10==1 && stopPrintPetting==1){
+    lcd.clear();
+    stopPrintPetting=0;
+    }
+  if(second%10==2 && stopPrintPetting==1){
+    lcd.clear();
+    stopPrintPetting=0;
+    }
+
+
+  delay(1000);
+
+
+  client.loop();
+  buttonState = digitalRead(buttonpin);
+  if (!client.connected()) {
+    connect();
+  }
+
+  // Send message when button is pressed
+  if (digitalRead(buttonpin) == LOW) {
+    client.publish(mqtt_topic, "Button Pressed");
+    Serial.println("Button Pressed");
+    delay(220); // debounce
+  }
+
+  if (buttonState == HIGH && lastButtonState == LOW) {
+    // Debounce delay to avoid multiple presses
+    delay(50);
+    
+    // Increment the stage and reset after stage 3
+    stage++;
+    
+    if (stage > 3) {
+      stage = 0;
+    }
+
+    // Rotate motor by the appropriate number of steps
+    rotateToStage(stage);
+
+    // Print the current stage for debugging
+    Serial.print("Stage: ");
+    
+    Serial.println(stage);
+  }
+
+  // Save the current button state for the next loop
+  lastButtonState = buttonState;
+
+}
+
+void rotateToStage(int stage) {
+
+  // Rotate the motor by the calculated number of steps
+  for (int i = 0; i < stepsPer90Degree; i++) {
+    OneStep(true);  // Rotate in the forward direction
+    delay(2);       // Adjust delay for motor speed
+  }
+  stage++;
+  if (stage > 3) {
+    stage = 0;  // Reset to stage 0 after reaching stage 3
+  }
+}
+
+// Function to control the stepper motor by one step
+void OneStep(bool dir) {
+  if (dir) {
+    switch (step_number) {
+      case 0:
+        digitalWrite(STEPPER_PIN_1, HIGH);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 1:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, HIGH);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 2:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, HIGH);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 3:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, HIGH);
+        break;
+    }
+  } else {
+    switch (step_number) {
+      case 0:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, HIGH);
+        break;
+      case 1:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, HIGH);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 2:
+        digitalWrite(STEPPER_PIN_1, LOW);
+        digitalWrite(STEPPER_PIN_2, HIGH);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+      case 3:
+        digitalWrite(STEPPER_PIN_1, HIGH);
+        digitalWrite(STEPPER_PIN_2, LOW);
+        digitalWrite(STEPPER_PIN_3, LOW);
+        digitalWrite(STEPPER_PIN_4, LOW);
+        break;
+    }
+  }
+
+  step_number++;
+  if (step_number > 3) {
+    step_number = 0;
+  }
+}
