@@ -1,0 +1,193 @@
+// Exmaple of using the MQTT library for ESP32 
+// Library by Joël Gähwiler
+// https://github.com/256dpi/arduino-mqtt
+// Modified by Arnan Sipitakiat
+#define MPin1 19
+#define MPin2 18
+#define MPin3 5
+#define MPin4 17
+bool cooking = false;
+
+#include <WiFi.h>
+#include <MQTT.h>
+#include "RTClib.h"
+#include <LCD_I2C.h>
+
+RTC_DS1307 rtc;
+LCD_I2C lcd(0x27, 16, 2);
+
+const char ssid[] = "@JumboPlusIoT";
+const char pass[] = "apimaharyujin888";
+
+const char mqtt_broker[]="test.mosquitto.org";
+const char mqtt_topic[]="PPPgroup9/command";
+const char mqtt_client_id[]="clientId-M2oeQpHcZC"; // must change this string to a unique value
+int MQTT_PORT=1883;
+
+int counter=0;
+
+WiFiClient net;
+MQTTClient client;
+
+unsigned long lastMillis = 0;
+
+void connect() {
+  Serial.print("checking wifi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.print("\nconnecting...");
+  while (!client.connect(mqtt_client_id)) {  
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("\nconnected!");
+
+  client.subscribe(mqtt_topic);
+  // client.unsubscribe("/hello");
+}
+
+void boilegg(int delaytime){
+  cooking = true;
+  for(int i = 0 ; i < 512 ; i++){
+     digitalWrite(MPin1,HIGH);
+     digitalWrite(MPin2,LOW);
+     digitalWrite(MPin3,LOW);
+     digitalWrite(MPin4,LOW);
+     delay(delaytime);
+     digitalWrite(MPin1,LOW);
+     digitalWrite(MPin2,HIGH);
+     digitalWrite(MPin3,LOW);
+     digitalWrite(MPin4,LOW);
+     client.publish(mqtt_topic, "Boiling Egg.");
+     delay(delaytime);
+     digitalWrite(MPin1,LOW);
+     digitalWrite(MPin2,LOW);
+     digitalWrite(MPin3,HIGH);
+     digitalWrite(MPin4,LOW);
+     delay(delaytime);
+     digitalWrite(MPin1,LOW);
+     digitalWrite(MPin2,LOW);
+     digitalWrite(MPin3,LOW);
+     digitalWrite(MPin4,HIGH);
+     delay(delaytime);
+     client.publish(mqtt_topic, "Boiling Egg..");
+     
+  }
+  for (int i = 0; i < 5; ++i)
+    {
+      lcd.clear();
+      delay(500);
+      lcd.print("Egg is ready!!");
+      delay(500);
+    }
+    delay(1000);
+    lcd.clear();
+    lcd.print("EggBoiling Timer");
+    lcd.setCursor(0, 1);
+    lcd.print("Waiting..");
+  cooking = false;
+}
+
+void messageReceived(String &topic, String &payload) {
+  Serial.println("incoming: " + topic + " - " + payload);
+  if(cooking == false)
+  {
+    if(payload == "onsen")
+    {
+      GetTime(2);
+      boilegg(58);
+      
+    }
+    if(payload == "mediumrare")
+    {
+      GetTime(4);
+      boilegg(117);
+    }
+    if(payload == "medium")
+    {
+      GetTime(6);
+      boilegg(176);
+    }
+    if(payload == "welldone")
+    {
+      GetTime(8);
+      boilegg(234);
+    }
+    client.publish(mqtt_topic, "Done!!!");
+
+  }
+  
+  // Note: Do not use the client in the callback to publish, subscribe or
+  // unsubscribe as it may cause deadlocks when other things arrive while
+  // sending and receiving acknowledgments. Instead, change a global variable,
+  // or push to a queue and handle it in the loop after calling `client.loop()`.
+}
+
+void GetTime(int min)
+{
+  
+  DateTime now = rtc.now();
+  DateTime future (now - TimeSpan(0,0,55 - min,37));
+
+  char timeStr[9]; // Buffer to store formatted time (HH:MM:SS)
+  sprintf(timeStr, "%02d:%02d:%02d", future.hour(), future.minute(), future.second());
+  lcd.clear();
+  lcd.print("Boiling..");
+  lcd.setCursor(0, 1);
+  lcd.print("Time : ");
+  lcd.print(timeStr);
+}
+
+void setup() {
+  Serial.begin(9600);
+  WiFi.begin(ssid, pass);
+
+  // Note: Local domain names (e.g. "Computer.local" on OSX) are not supported
+  // by Arduino. You need to set the IP address directly.
+  client.begin(mqtt_broker, MQTT_PORT, net);
+  client.onMessage(messageReceived);
+
+  connect();
+  lcd.begin();
+  lcd.backlight();
+  lcd.print("EggBoiling Timer");
+  lcd.setCursor(0, 1);
+  lcd.print("Waiting..");
+  #ifndef ESP8266
+  while (!Serial); // wait for serial port to connect. Needed for native USB
+#endif
+
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1) delay(10);
+  }
+
+  if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running, let's set the time!");
+    // When time needs to be set on a new device, or after a power loss, the
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // This line sets the RTC with an explicit date & time, for example to set
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+  }
+  pinMode(MPin1,OUTPUT);
+  pinMode(MPin2,OUTPUT);
+  pinMode(MPin3,OUTPUT);
+  pinMode(MPin4,OUTPUT);
+}
+
+void loop() {
+  client.loop();
+  delay(10);  // <- fixes some issues with WiFi stability
+
+  if (!client.connected()) {
+    connect();
+  }
+  DateTime now = rtc.now();
+}
