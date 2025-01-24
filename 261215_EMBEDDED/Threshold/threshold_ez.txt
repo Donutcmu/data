@@ -1,0 +1,39 @@
+#define LDR 15      
+#define LED 22    
+
+int LDR_Value = 0;
+int static_variable = 500;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LED, OUTPUT); 
+}
+
+void loop() {
+  LDR_Value = analogRead(LDR);
+
+ 
+  if (LDR_Value < 1200) {
+    digitalWrite(LED, HIGH); 
+  } 
+  else if (LDR_Value > 1200) {
+    digitalWrite(LED, LOW);  
+  }
+
+  Serial.print("Sensor:");
+  Serial.print(LDR_Value);
+  Serial.print(",");
+  Serial.print("Threshold:");
+  Serial.print(1200);
+  Serial.print(",");
+  Serial.print("LED:");
+  if (LDR_Value < 1200) {
+    Serial.println(100);
+  } 
+  else if (LDR_Value > 1200) {
+    Serial.println(0); 
+  }
+
+
+  //delay(20);
+}
