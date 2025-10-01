@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NUMMEMORY 65536 /* maximum number of words in memory */
+#define NUMREGS 8 /* number of machine registers */
+#define MAXLINELENGTH 1000
+
+typedef struct stateStruct {
+    int pc;
+    int mem[NUMMEMORY];
+    int reg[NUMREGS];
+    int numMemory;
+} stateType;
+
+void printState(stateType *);
+
+int main(int argc, char *argv[])
+{
+    char line[MAXLINELENGTH];
+    stateType state;
+    FILE *filePtr;
+
+    char *filename = ""; \\ copy path ของ ไฟล์ Machinecode มาใส่
+
+
+    /*if (argc != 2) {
+	printf("error: usage: %s <machine-code file>\n", argv[0]);
+	exit(1);
+    }*/
+
+    filePtr = fopen(filename, "r");
+    if (filePtr == NULL) {
+        printf("error: can't open file %s\n", filename);
+        perror("fopen");
+        exit(1);
+    }
+
+    /* read in the entire machine-code file into memory */
+    for (state.numMemory = 0; fgets(line, MAXLINELENGTH, filePtr) != NULL;
+	state.numMemory++) {
+        if (sscanf(line, "%d", state.mem+state.numMemory) != 1) {
+            printf("error in reading address %d\n", state.numMemory);
+            exit(1);
+        }
+        printf("memory[%d]=%d\n", state.numMemory, state.mem[state.numMemory]);
+    }
+
+    state.pc = 0;
+    for (int i = 0; i < NUMREGS; i++) {
+        state.reg[i] = 0;  
+    }
+    state.reg[0] = 0; 
+
+    
+    while (1) {
+        printState(&state);
+
+        int instruction = state.mem[state.pc];
+        int opcode = (instruction >> 22) & 0x7;
+        int regA   = (instruction >> 19) & 0x7;
+        int regB   = (instruction >> 16) & 0x7;
+        int regDes     = instruction & 0x7;          
+        int offset = convertNum(instruction & 0xFFFF);  // 16-bit
+
+        state.pc++; // เพิ่มก่อนเสมอ เว้นแต่ beq หรือ jalr
+        int address = state.reg[regA] + offset;
+
+        switch (opcode) {
+            case 0: // add
+                state.reg[regDes] = state.reg[regA] + state.reg[regB];
+                break;
+            case 1: // nand
+                state.reg[regDes] = ~(state.reg[regA] & state.reg[regB]);
+                break;
+            case 2: // lw
+                if (address >=0 && address < NUMMEMORY){
+                    state.reg[regB] = state.mem[address];
+                }
+                break;
+            case 3: // sw
+                if (address >=0 && address < NUMMEMORY){
+                    state.mem[address] = state.reg[regB];
+                    if (address >= state.numMemory) state.numMemory = address+1;
+                }
+                break;
+            case 4: // beq
+                if (state.reg[regA] == state.reg[regB])
+                    state.pc += offset;
+                break;
+            case 5: // jalr
+                state.reg[regB] = state.pc;
+                state.pc = state.reg[regA];
+                break;
+            case 6: // halt
+                printf("machine halted\n");
+                printState(&state);
+                exit(0);
+            case 7: // noop
+                break;
+        }
+    }
+    return(0);
+}
+
+void printState(stateType *statePtr)
+{
+    int i;
+    printf("\n@@@\nstate:\n");
+    printf("\tpc %d\n", statePtr->pc);
+    printf("\tmemory:\n");
+	for (i=0; i<statePtr->numMemory; i++) {
+	    printf("\t\tmem[ %d ] %d\n", i, statePtr->mem[i]);
+	}
+    printf("\tregisters:\n");
+	for (i=0; i<NUMREGS; i++) {
+	    printf("\t\treg[ %d ] %d\n", i, statePtr->reg[i]);
+	}
+    printf("end state\n");
+}
+
+int convertNum(int num){
+    if (num & (1<<15) ) {
+          num -= (1<<16);
+    }        
+    return(num);
+}
